@@ -509,7 +509,7 @@ function nowItems(){const p=PL(),t=today(),ds=iso(t),wd=t.getDay(),g=G(ds),h=now
  if(st.ft){const m=foMin();I.push({p:99,ic:p.focus?p.focus.ic:"📚",t:`${p.focus?p.focus.n:"Sessione"} in corso · ${m} min`,s:"Concentrazione piena: telefono lontano.",a:"foStop()",b:"Termina la sessione",tone:"hot"})}
  if(night)I.push({p:100,ic:"🌙",t:"È ora di dormire",s:"Il recupero è allenamento: spegni gli schermi e vai a letto.",tone:"night"});
  else if(h>=22.5)I.push({p:70,ic:"🛏️",t:"Tra poco a letto",s:"Luci basse, niente telefono: prepara la notte.",tone:"night"});
- if(!g.sl&&h>=5&&h<16)I.push({p:h<11?84:55,ic:p.sem?"🚦":"😴",t:p.sem?"Check-in del mattino":"Com’è andato il sonno?",s:p.sem?"Sonno e indolenzimento: decidono il semaforo dell’allenamento.":"Registralo in 5 secondi.",a:"sleepS()",b:p.sem?"Fai il check-in":"Registra il sonno"});
+ if(!g.sl&&h>=5&&h<22.5)I.push({p:h<11?84:h<16?55:42,ic:p.sem?"🚦":"😴",t:p.sem?"Check-in del mattino":"Com’è andato il sonno?",s:p.sem?"Sonno e indolenzimento: decidono il semaforo dell’allenamento.":"Registralo in 5 secondi.",a:"sleepS()",b:p.sem?"Fai il check-in":"Registra il sonno"});
  if(p.weeks&&!st.wt[ds]&&h>=5&&h<11)I.push({p:52,ic:"⚖️",t:"Pesata a digiuno",s:"Dopo il bagno. Conta la media della settimana, non il singolo giorno.",a:"wtS()",b:"Registra il peso"});
  if(ex.length){const n=ex.length,dn=ex.filter(e=>g.e&&g.e[e.id]).length,started=g.ws||dn>0,T=S.n,sx=sm?` ${SEM[sm][0]} ${SEM[sm][1]}: ${SEM[sm][2]}`:"";
   if(dn<n){if(started)I.push({p:96,ic:"⚡",t:`${T} in corso · ${dn}/${n}`,s:"Riprendi da dove eri rimasto."+sx,a:"fstart()",b:"Riprendi l’allenamento",tone:"hot"});

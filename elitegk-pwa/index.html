@@ -563,11 +563,11 @@ function vToday(){if(!hasPlan())return vWelcome();
  const hd=st.hb.filter(x=>g.h&&g.h[x.id]).length,wi=workInfo(ds);
  const kp=s.kt?s.kc/s.kt:0;
  const m4=[];
- if(p.focus)m4.push(`<div class="met">${ring(s.fo/100,34,4,"#2F6FDB","")}<div><b>${g.fo||0} min</b><small>${esc(p.focus.n)} · ${p.focus.goal} min</small></div></div>`);
+ if(p.focus)m4.push(`<div class="met">${ring(s.fo/100,34,4,"#2F6FDB","")}<div><b>${g.fo||0} min</b><small>${esc(p.focus.n)}</small></div></div>`);
  if(ex.length||!p.focus)m4.push(`<div class="met">${ring(ex.length?exd/ex.length:1,34,4,kc(Ss.k)[1],"")}<div><b>${ex.length?exd+"/"+ex.length:"Riposo"}</b><small>Allenamento</small></div></div>`);
  if(p.meals)m4.push(`<div class="met">${ring(Math.min(1,kp),34,4,kp>1.1?"var(--am)":"var(--ac)","")}<div><b>${fmtK(s.kc)}</b><small>di ${fmtK(s.kt)} kcal</small></div></div>`);
  m4.push(`<div class="met">${ring(s.hb>=0?s.hb/100:0,34,4,"var(--ok)","")}<div><b>${hd}/${st.hb.length}</b><small>Abitudini</small></div></div>`);
- m4.push(`<div class="met" onclick="sleepS()" style="cursor:pointer">${ring(s.sl?Math.min(1,s.sl/7.5):0,34,4,"#6C63D9","")}<div><b>${s.sl?n1(s.sl)+" h":"—"}</b><small>${s.sl?"Sonno":"Registra sonno"}</small></div></div>`);
+ m4.push(`<div class="met" onclick="sleepS()" style="cursor:pointer">${ring(s.sl?Math.min(1,s.sl/7.5):0,34,4,"#6C63D9","")}<div><b>${s.sl?n1(s.sl)+" h":"—"}</b><small>Sonno</small></div></div>`);
  return `<header class="hd"><div><div class="ey">${GN[wd]} ${t.getDate()} ${MN[t.getMonth()]}</div><h1>${sal}${nm?", "+esc(nm):""}</h1></div><button class="ib" onclick="setS()" aria-label="Impostazioni">${IC.gear}</button></header>
 <div class="row" style="gap:8px;flex-wrap:wrap"><button class="pill" onclick="go('j')">🔥 ${S.cur} ${S.cur==1?"giorno":"giorni"} di serie</button><button class="pill gd" onclick="go('j')">${lv.l[2]} ${lv.l[1]}</button>${pw?`<span class="pill">Sett. ${pw.n}/${pw.of}${pw.c==4?" · scarico":""}</span>`:""}${Ss.k!="rest"||!p.focus?kb(Ss.k):""}</div>
 <section class="now ${h.tone||""}" aria-live="polite"><div class="ey">Adesso · ${hm(nowH())}</div><div class="nw"><span class="ne" aria-hidden="true">${h.ic}</span><div class="f1"><h2>${esc(h.t)}</h2>${h.s?`<p>${esc(h.s)}</p>`:""}${h.k?`<span class="kc">≈ ${h.k} kcal</span>`:""}</div></div>${h.b?`<button class="btn" onclick="${h.a}">${h.b}</button>`:""}</section>

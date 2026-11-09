@@ -28,8 +28,21 @@ export async function onRequest({request:req,env}){
    const id=await mk(env,u,pw,{sport:!!body.sport,team:[1,4],match:0});
    return J({ok:1},200,{"set-cookie":await sess(env,id)});
   }
+  if(p=="waitlist"&&m=="POST"){
+   if(body.website)return J({ok:1});
+   const t=(k,n)=>String(body[k]||"").trim().slice(0,n);
+   const w={name:t("name",80),contact:t("contact",120),role:t("role",10),city:t("city",60),clients:t("clients",20),price:t("price",20),model:t("model",30),tools:t("tools",120),note:t("note",400)};
+   if(!w.name||!w.contact)return J({e:"Inserisci nome e un contatto."},400);
+   await env.DB.prepare("CREATE TABLE IF NOT EXISTS waitlist(id INTEGER PRIMARY KEY AUTOINCREMENT,created INTEGER NOT NULL,name TEXT,contact TEXT NOT NULL UNIQUE,role TEXT,city TEXT,clients TEXT,price TEXT,model TEXT,tools TEXT,note TEXT)").run();
+   await env.DB.prepare("INSERT INTO waitlist(created,name,contact,role,city,clients,price,model,tools,note) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(contact) DO UPDATE SET name=excluded.name,role=excluded.role,city=excluded.city,clients=excluded.clients,price=excluded.price,model=excluded.model,tools=excluded.tools,note=excluded.note").bind(Date.now(),w.name,w.contact,w.role,w.city,w.clients,w.price,w.model,w.tools,w.note).run();
+   return J({ok:1});
+  }
   const me=await who(env,req);if(!me)return J({e:"auth"},401);
-  if(p=="me"){const s=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first();return J({user:{username:me.username},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{}})}
+  const isAdm=!!(env.ADMIN_USER&&me.username===env.ADMIN_USER.toLowerCase());
+  if(p=="waitlist"&&m=="GET"){if(!isAdm)return J({e:"nf"},404);let rows=[];try{rows=(await env.DB.prepare("SELECT * FROM waitlist ORDER BY created DESC").all()).results||[]}catch(e){}
+   if(url.searchParams.get("csv")){const c=["data","nome","contatto","ruolo","citta","clienti","prezzo","modello","strumenti","note"],q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';const lines=[c.join(";")].concat(rows.map(r=>[new Date(r.created).toISOString().slice(0,16).replace("T"," "),r.name,r.contact,r.role,r.city,r.clients,r.price,r.model,r.tools,r.note].map(q).join(";")));return new Response("\ufeff"+lines.join("\n"),{headers:{"content-type":"text/csv; charset=utf-8","content-disposition":"attachment; filename=lista-attesa-pro.csv","cache-control":"no-store"}})}
+   return J({rows})}
+  if(p=="me"){const s=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first();return J({user:{username:me.username,admin:isAdm},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{}})}
   if(p=="state"&&m=="PUT"){const d=JSON.stringify(body);if(d.length>200000)return J({e:"big"},413);await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(me.id,d,Date.now()).run();return J({ok:1})}
   if(p=="profile"&&m=="PUT"){const pr={sport:!!body.sport,team:(Array.isArray(body.team)?body.team:[]).map(Number).filter(n=>n>=0&&n<7).slice(0,2),match:Number.isInteger(body.match)&&body.match>=-1&&body.match<7?body.match:-1};await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(pr),me.id).run();return J({ok:1})}
   if(p=="logout"&&m=="POST"){const c=/(?:^|; )sid=([^;]+)/.exec(req.headers.get("cookie")||"");if(c)await env.DB.prepare("DELETE FROM sessions WHERE th=?").bind(await sha(c[1])).run();return J({ok:1},200,{"set-cookie":"sid=; Path=/; Max-Age=0"})}

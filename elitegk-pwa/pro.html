@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elite GK Pro · lista d’attesa per PT, nutrizionisti e palestre</title>
+<meta name="description" content="Tu prescrivi, l’app lo fa seguire ogni giorno. Pilota a Catania per personal trainer, nutrizionisti e palestre: entra nella lista d’attesa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--nv:#0B1F3A;--nv2:#17406D;--ac:#C2410C;--ac2:#E8590C;--bg:#F4F2ED;--card:#fff;--tx:#0E1B2C;--mu:#5E6878;--bd:#E6E1D7;--ok:#1F9D55;--okd:#1F6B41;--am:#E3A008}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:var(--ac)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.top{background:var(--nv);color:#fff}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px}
+.logo i{width:36px;height:36px;border-radius:10px;background:var(--ac2);display:grid;place-items:center;font-style:normal}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px 20px;font-weight:800;font-size:16px;text-decoration:none;min-height:48px}
+.btn.p{background:var(--ac);color:#fff}.btn.p:hover{background:#9A3412}
+.btn.w{background:#fff;color:var(--nv)}
+.btn.o{border:1px solid rgba(255,255,255,.35);color:#fff;background:transparent}
+.hero{padding:40px 0 64px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.ey{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#F4B183}
+h1{font-size:54px;line-height:1.04;letter-spacing:-.03em;margin:14px 0 0}
+.sub{font-size:19px;color:#D5DFEC;margin:18px 0 0;max-width:560px}
+.roles{margin-top:26px}
+.roles p{margin:0 0 10px;font-weight:700;color:#C9D6E6;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:12px;padding:10px 14px;font-weight:700;font-size:15px;min-height:44px}
+.chip[aria-pressed="true"]{background:#fff;color:var(--nv);border-color:#fff}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.heroart{display:flex;flex-direction:column;gap:16px}
+.float{position:relative;background:#fff;color:var(--tx);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.35);padding:16px}
+.f1{width:min(360px,100%);animation:bob 6s ease-in-out infinite}
+.f2{align-self:flex-end;width:260px;background:linear-gradient(150deg,var(--nv2),var(--nv));color:#fff;border:1px solid rgba(255,255,255,.18);animation:bob 6s ease-in-out -3s infinite}
+.f1 .row{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #EEEAE2;font-size:14px}
+.dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
+.mini{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--mu)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+section.blk{padding:72px 0}
+h2{font-size:38px;line-height:1.1;letter-spacing:-.02em;margin:0}
+.lead{font-size:18px;color:#3D4654;margin:12px 0 0;max-width:720px}
+.k{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--ac)}
+/* demo professionista */
+.demo{display:grid;grid-template-columns:280px 1fr;gap:24px;margin-top:32px;align-items:stretch}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;text-align:left;border:1px solid var(--bd);background:#fff;border-radius:16px;padding:14px;width:100%;position:relative;overflow:hidden}
+.step b{display:block;font-size:15px}.step span{font-size:13px;color:var(--mu)}
+.step .n{width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:#ECE7DD;display:grid;place-items:center;font-weight:800;font-size:13px}
+.step.on{border-color:var(--nv);box-shadow:0 8px 24px rgba(11,31,58,.12)}
+.step.on .n{background:var(--nv);color:#fff}
+.step .bar{position:absolute;left:0;bottom:0;height:3px;background:var(--ac2);width:0}
+.step.on .bar{animation:fill var(--dur,3.6s) linear forwards}
+@keyframes fill{to{width:100%}}
+.win{background:#fff;border:1px solid var(--bd);border-radius:20px;box-shadow:0 20px 50px rgba(11,31,58,.10);overflow:hidden;min-height:400px;display:flex;flex-direction:column}
+.win .tb{display:flex;gap:6px;align-items:center;padding:12px 16px;border-bottom:1px solid #EEEAE2;background:#FAF8F4}
+.win .tb i{width:10px;height:10px;border-radius:50%;background:#E6E1D7}
+.win .tb span{margin-left:10px;font-size:13px;font-weight:700;color:var(--mu)}
+.stage{flex:1;padding:24px;position:relative}
+.scene{animation:in .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.drop{border:2px dashed #C9C1B2;border-radius:16px;padding:26px;text-align:center;color:var(--mu)}
+.file{display:inline-flex;align-items:center;gap:10px;background:#F8F6F1;border:1px solid var(--bd);border-radius:12px;padding:10px 14px;font-weight:700;color:var(--tx);margin-top:12px;animation:drop .7s cubic-bezier(.2,.8,.2,1) both .2s}
+@keyframes drop{from{opacity:0;transform:translateY(-30px) scale(.9)}to{opacity:1;transform:none}}
+.ft{font-size:11px;font-weight:800;color:#fff;border-radius:5px;padding:2px 6px}
+.prog{height:10px;background:#ECE7DD;border-radius:99px;overflow:hidden;margin-top:14px}
+.prog i{display:block;height:100%;background:var(--ok);width:0;animation:pg 2.2s ease forwards .3s}
+@keyframes pg{to{width:100%}}
+.rec{display:grid;gap:8px;margin-top:16px}
+.rec div{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;font-size:14px;opacity:0;animation:in .4s both}
+.ok{color:var(--okd);font-weight:800}
+.pill{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800}
+.need{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #EEEAE2;opacity:0;animation:in .45s both}
+.need:first-child{border-top:0}
+.av{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px}
+.ap{border:0;background:var(--nv);color:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:13px;margin-left:auto;transition:background .3s}
+.ap.done{background:var(--ok)}
+.inv{display:flex;gap:10px;align-items:center;border:1px solid var(--bd);background:#F8F6F1;border-radius:12px;padding:10px 12px;margin-top:14px;font-family:ui-monospace,monospace;font-size:14px}
+.sent{display:flex;gap:10px;align-items:center;margin-top:14px;padding:12px;border-radius:12px;background:#DCEFE4;color:var(--okd);font-weight:700;opacity:0;animation:in .4s both 1.4s}
+.shotwin{position:relative;height:470px;overflow:hidden;background:#F4F2ED}
+.shotwin img{position:absolute;left:0;top:0;width:100%;display:block;animation:pan var(--pt,6s) ease-in-out .6s both}
+@keyframes pan{to{transform:translateY(var(--shift,0px))}}
+.cap2{padding:14px 18px;border-top:1px solid #EEEAE2;font-size:14px;color:#3D4654;background:#fff}
+.cap2 b{color:var(--tx)}
+.scr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;animation:in .45s cubic-bezier(.2,.8,.2,1) both}
+.real{display:inline-flex;align-items:center;gap:6px;background:#DCEFE4;color:var(--okd);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:800;margin-top:12px}
+/* demo cliente */
+.cli{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:center;margin-top:32px}
+.phone{width:320px;height:640px;margin:0 auto;border-radius:44px;background:#0E1B2C;padding:12px;box-shadow:0 30px 70px rgba(11,31,58,.25)}
+.scr{width:100%;height:100%;border-radius:34px;background:var(--bg);overflow:hidden;position:relative}
+.now{border-radius:20px;padding:16px;color:#fff;background:linear-gradient(150deg,var(--nv),var(--nv2));margin-top:10px}
+.now.hot{background:linear-gradient(150deg,#E8590C,#B83E06)}
+.now.ok2{background:linear-gradient(150deg,#14653A,#1F9D55)}
+.now .t{font-size:20px;font-weight:800;line-height:1.2;margin-top:6px}
+.now .s{font-size:13px;color:rgba(255,255,255,.85);margin-top:6px}
+.now .b{background:#fff;color:var(--nv);border-radius:10px;text-align:center;font-weight:800;font-size:14px;padding:10px;margin-top:12px}
+.tap{position:absolute;width:36px;height:36px;border-radius:50%;background:rgba(232,89,12,.35);border:2px solid #E8590C;pointer-events:none;animation:tap 1.2s ease both .9s;opacity:0}
+@keyframes tap{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1)}70%{opacity:1;transform:scale(.85)}100%{opacity:0;transform:scale(1.2)}}
+.ccap{display:flex;flex-direction:column;gap:10px}
+.cstep{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid transparent;text-align:left;background:transparent;width:100%}
+.cstep.on{background:#fff;border-color:var(--bd);box-shadow:0 8px 24px rgba(11,31,58,.08)}
+.cstep b{display:block;font-size:16px}.cstep span{color:var(--mu);font-size:14px}
+.cstep .n{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:#ECE7DD;display:grid;place-items:center;font-weight:800}
+.cstep.on .n{background:var(--ac);color:#fff}
+.fb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.fb span{border:1px solid var(--bd);background:#fff;border-radius:10px;padding:10px 4px;text-align:center;font-weight:800;font-size:13px;transition:all .3s}
+.fb span.sel{background:var(--nv);color:#fff;border-color:var(--nv)}
+.hab{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;font-weight:600}
+.ck{width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900;margin-left:auto}
+/* conversione */
+.conv{background:var(--nv);color:#fff;border-radius:28px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.conv p{color:#D5DFEC;font-size:18px;margin:12px 0 0}
+.files{position:relative;height:220px}
+.fl{position:absolute;display:flex;gap:10px;align-items:center;background:#fff;color:var(--tx);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:flow 6s ease-in-out infinite}
+.fl:nth-child(1){left:0;top:0}.fl:nth-child(2){left:30px;top:70px;animation-delay:-1.5s}.fl:nth-child(3){left:0;top:140px;animation-delay:-3s}.fl:nth-child(4){left:50px;top:200px;animation-delay:-4.5s}
+@keyframes flow{0%{transform:translateX(0);opacity:0}15%{opacity:1}60%{transform:translateX(150px);opacity:1}80%,100%{transform:translateX(200px);opacity:0}}
+.app{position:absolute;right:0;top:50px;width:150px;height:130px;border-radius:22px;background:linear-gradient(150deg,#E8590C,#B83E06);display:grid;place-items:center;font-weight:800;font-size:15px;text-align:center;padding:12px;box-shadow:0 16px 40px rgba(0,0,0,.3)}
+/* form */
+.formw{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:start}
+form{background:#fff;border:1px solid var(--bd);border-radius:24px;padding:28px;box-shadow:0 20px 50px rgba(11,31,58,.08)}
+fieldset{border:0;margin:0 0 20px;padding:0}
+legend{font-weight:800;font-size:16px;margin-bottom:10px;padding:0}
+label.f{display:block;font-size:14px;font-weight:700;color:var(--mu);margin-bottom:14px}
+label.f input,label.f select,label.f textarea{display:block;width:100%;margin-top:6px;padding:13px 14px;border:1px solid var(--bd);border-radius:12px;background:#F8F6F1;font:inherit;font-size:16px;color:var(--tx)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.opt span{display:block;border:1px solid var(--bd);background:#F8F6F1;border-radius:12px;padding:11px 14px;font-weight:700;font-size:15px;min-height:44px}
+.opt input:checked+span{background:var(--nv);color:#fff;border-color:var(--nv)}
+.opt input:focus-visible+span{outline:3px solid var(--ac2);outline-offset:2px}
+.hint{font-size:13px;color:var(--mu);margin:-4px 0 10px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D4654;margin:6px 0 18px}
+.consent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
+.msg{margin-top:12px;font-weight:700;font-size:15px;min-height:1.5em}
+.thanks{text-align:center;padding:30px 10px}
+.thanks b{display:block;font-size:46px}
+.faq{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.faq div{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:20px}
+.faq b{display:block;margin-bottom:6px;font-size:16px}
+footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.preview{background:var(--am);color:#1a1200;text-align:center;font-weight:800;font-size:13px;padding:6px}
+@media (max-width:900px){
+ .hero,.demo,.cli,.conv,.formw{grid-template-columns:1fr}
+ h1{font-size:40px}h2{font-size:30px}
+ .f2{width:240px}
+ .steps{flex-direction:row;overflow-x:auto}.step{min-width:220px}
+ .faq{grid-template-columns:1fr}.conv{padding:28px}
+ .cli .phone{order:-1}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="pv" class="preview" hidden>Anteprima: qui le iscrizioni non vengono salvate. Sul sito vero finiscono nel database.</div>
+<header class="top">
+  <div class="wrap">
+    <nav class="nav" aria-label="Principale">
+      <div class="logo"><i>GK</i>Elite GK Pro</div>
+      <a class="btn w" href="#lista">Lista d’attesa</a>
+    </nav>
+    <div class="hero">
+      <div>
+        <div class="ey">Personal trainer · nutrizionisti · palestre · pilota a Catania</div>
+        <h1>Tu prescrivi.<br>L’app lo fa seguire, ogni giorno.</h1>
+        <p class="sub">I tuoi clienti trovano allenamento, pasti e abitudini ora per ora. Tu vedi ogni mattina chi ha bisogno di te, senza inseguire nessuno su WhatsApp.</p>
+        <div class="roles">
+          <p id="rl">Sono:</p>
+          <div class="chips" role="group" aria-labelledby="rl" id="roles"></div>
+        </div>
+        <div class="cta"><a class="btn p" href="#demo">Guarda come funziona</a><a class="btn o" href="#lista">Entra nella lista d’attesa</a></div>
+      </div>
+      <div class="heroart" aria-hidden="true">
+        <div class="float f1" id="heroCard"></div>
+        <div class="float f2"><div class="mini" style="color:#C9D6E6">ADESSO · 18:25</div><div style="font-size:18px;font-weight:800;margin-top:6px" id="heroNow">Seduta A alle 18:30</div><div style="font-size:13px;color:#D5DFEC;margin-top:4px">Tra poco si parte: preparati.</div><div style="background:#fff;color:var(--nv);border-radius:10px;text-align:center;font-weight:800;font-size:14px;padding:10px;margin-top:12px">Inizia adesso</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="blk" id="demo" aria-labelledby="h1d">
+    <div class="wrap">
+      <div class="k" id="dk">Dal lato del personal trainer</div>
+      <h2 id="h1d">Le schermate che troverai, dal tuo lato</h2>
+      <p class="lead" id="dlead">Carichi la scheda che usi già, la rivedi, la invii. Poi l’app ti dice solo cosa serve a te.</p>
+      <div class="demo">
+        <div class="steps" id="psteps" role="tablist" aria-label="Passi lato professionista"></div>
+        <div class="win"><div class="tb"><i></i><i></i><i></i><span id="wtitle">Elite GK Pro</span></div><div id="pstage"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" style="background:#fff;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)" aria-labelledby="h2d">
+    <div class="wrap">
+      <div class="k">Dal lato del tuo cliente</div>
+      <h2 id="h2d">Non deve ricordarsi niente: l’app gli dice cosa fare adesso</h2><div class="real">✓ Schermate reali dell’app, già in uso</div>
+      <div class="cli">
+        <div class="ccap" id="csteps" role="tablist" aria-label="Passi lato cliente"></div>
+        <div class="phone"><div class="scr" id="cstage"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" aria-labelledby="h3d">
+    <div class="wrap">
+      <div class="conv">
+        <div>
+          <div class="k" style="color:#F4B183">Nessun lavoro doppio</div>
+          <h2 id="h3d" style="margin-top:8px">Hai già tutto in Excel, PDF, Word o in foto? La conversione la facciamo noi.</h2>
+          <p>Ci mandi i file che usi oggi: li trasformiamo in piani dentro l’app e tu li controlli prima che partano ai clienti. Se hai tanti clienti, ti seguiamo passo passo.</p>
+        </div>
+        <div class="files" aria-hidden="true">
+          <div class="fl"><span class="ft" style="background:#1F7A45">XLS</span>schede_clienti.xlsx</div>
+          <div class="fl"><span class="ft" style="background:#B42318">PDF</span>piano_marta.pdf</div>
+          <div class="fl"><span class="ft" style="background:#2F6FDB">DOC</span>dieta_luca.docx</div>
+          <div class="fl"><span class="ft" style="background:#7C4DDB">JPG</span>scheda_foto.jpg</div>
+          <div class="app">Piani pronti nell’app</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" id="lista" aria-labelledby="h4d" style="padding-top:24px">
+    <div class="wrap formw">
+      <div>
+        <div class="k">Lista d’attesa</div>
+        <h2 id="h4d" style="margin-top:8px">Entra tra i primi del pilota</h2>
+        <p class="lead">Partiamo con pochi professionisti a Catania. Lasciaci i tuoi contatti e dicci quanto ti sembrerebbe giusto pagare: il prezzo lo decidiamo anche con le vostre risposte.</p>
+        <div class="faq" style="grid-template-columns:1fr;margin-top:24px">
+          <div><b>Quando parte?</b>Con un pilota a Catania: ti scriviamo appena c’è posto, senza impegno.</div>
+          <div><b>Devo rifare le schede?</b>No. Ci mandi i file che usi oggi e la conversione la facciamo noi.</div>
+          <div><b>E i dati dei miei clienti?</b>Restano tuoi, su server in UE. Ogni cliente dà il proprio consenso.</div>
+        </div>
+      </div>
+      <form id="wl" novalidate>
+        <div id="formBody">
+          <fieldset>
+            <legend>Chi sei</legend>
+            <div class="opts" id="roleOpts"></div>
+          </fieldset>
+          <div class="two">
+            <label class="f">Nome e cognome<input name="name" autocomplete="name" required maxlength="80"></label>
+            <label class="f">Città<input name="city" autocomplete="address-level2" value="Catania" maxlength="60"></label>
+          </div>
+          <label class="f">Email o cellulare<input name="contact" autocomplete="email" required maxlength="120" placeholder="per avvisarti quando c’è posto"></label>
+          <fieldset>
+            <legend>Quanti clienti segui oggi?</legend>
+            <div class="opts" data-name="clients"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Quanto pagheresti al mese per un servizio così?</legend>
+            <p class="hint">Per tutto: app per i clienti, pannello per te, conversione dei piani.</p>
+            <div class="opts" data-name="price"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Come preferiresti pagare?</legend>
+            <div class="opts" data-name="model"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Cosa usi oggi per i piani? <span style="font-weight:600;color:var(--mu)">(facoltativo)</span></legend>
+            <div class="opts" data-name="tools" data-multi="1"></div>
+          </fieldset>
+          <label class="f">Cosa ti servirebbe di più? <span style="font-weight:600">(facoltativo)</span><textarea name="note" rows="2" maxlength="400"></textarea></label>
+          <label class="hp">Non compilare<input name="website" tabindex="-1" autocomplete="off"></label>
+          <label class="consent"><input type="checkbox" name="consent" required>Acconsento a essere ricontattato per il pilota di Elite GK Pro. I dati servono solo a questo e puoi chiederne la cancellazione quando vuoi.</label>
+          <button class="btn p" type="submit" style="width:100%">Entra nella lista d’attesa</button>
+          <div class="msg" id="msg" role="status" aria-live="polite"></div>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Elite GK Pro · Catania · <a href="/">Accedi all’app</a></div></footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const ROLES=[["pt","Personal trainer"],["nu","Nutrizionista"],["both","PT e nutrizionista"],["gym","Palestra o studio"]];
+let role="pt";
+const R={
+ pt:{k:"Dal lato del personal trainer",lead:"Carichi la scheda che usi già, la rivedi, la invii. Poi l’app ti dice solo cosa serve a te.",file:["XLS","#1F7A45","scheda_sara.xlsx"],rec:["2 sedute riconosciute","14 esercizi con serie e recuperi","Progressione di 12 settimane"],plan:"Allenamento · 12 settimane",
+  need:[["LB","#FDE2D3","#9A3412","Luca","dolore al ginocchio segnalato 2 volte","Rivedi"],["SM","#DCEFE4","#1F6B41","Sara","Hip Thrust «facile» 3 volte: +2,5 kg?","Approva"],["DP","#FEF0C7","#7A4B00","Davide","nessuna seduta da 6 giorni","Scrivi"]],now:"Seduta A alle 18:30"},
+ nu:{k:"Dal lato del nutrizionista",lead:"Carichi il piano alimentare che usi già, lo rivedi, lo invii. Poi l’app ti dice solo cosa serve a te.",file:["PDF","#B42318","piano_marta.pdf"],rec:["7 giorni e 35 pasti riconosciuti","Grammature e calorie per pasto","Lista di sostituzioni"],plan:"Piano alimentare · 7 giorni",
+  need:[["MV","#DCEFE4","#1F6B41","Marta","peso medio fermo da 2 settimane: −150 kcal?","Approva"],["AR","#FEF0C7","#7A4B00","Alessio","pesce sostituito 4 volte su 4","Apri"],["GT","#FDE2D3","#9A3412","Giulia","cena saltata 3 sere su 5","Scrivi"]],now:"È ora di pranzo"},
+ both:{k:"Dal lato di chi è PT e nutrizionista",lead:"Allenamento e alimentazione nello stesso piano, con un solo invio. Poi l’app ti dice solo cosa serve a te.",file:["PDF","#B42318","piano_completo_luca.pdf"],rec:["2 sedute e 14 esercizi","7 giorni di pasti con calorie","Abitudini e obiettivi"],plan:"Allenamento + alimentazione",
+  need:[["SM","#DCEFE4","#1F6B41","Sara","Hip Thrust «facile» 3 volte: +2,5 kg?","Approva"],["MV","#DCEFE4","#1F6B41","Marta","peso medio fermo: −150 kcal?","Approva"],["LB","#FDE2D3","#9A3412","Luca","dolore al ginocchio segnalato","Rivedi"]],now:"Seduta A alle 18:30"},
+ gym:{k:"Dal lato della palestra o dello studio",lead:"Porti dentro tutti i clienti e tutto il team in una volta. Ognuno vede solo i suoi, tu vedi l’insieme.",file:["XLS","#1F7A45","clienti_e_schede.xlsx"],rec:["Elenco clienti abbinato","Schede di 3 professionisti","Team con ruoli e permessi"],plan:"Team · allenamento e alimentazione",
+  need:[["MR","#E3E8F2","#22385C","Marco (PT)","4 clienti da seguire oggi","Apri"],["CF","#DCEFE4","#1F6B41","Chiara (nutr.)","2 correzioni calorie da approvare","Apri"],["EC","#EDE7F8","#4C2F8A","Elena","abbonamento in scadenza tra 3 giorni","Rinnova"]],now:"Seduta A alle 18:30"}};
+const PS={
+ pt:[["Porta i tuoi clienti","Excel e PDF che usi già: li convertiamo noi, tu rivedi","p_importa"],["Nuovo cliente in 6 passi","allenamento da template, da PDF o da zero","p_wiz_all"],["Ogni mattina sai chi seguire","dolori segnalati, carichi da aumentare, clienti fermi","p_oggi"],["La scheda di ogni cliente","aderenza, feedback e suggerimenti da approvare","p_cliente"]],
+ nu:[["Porta i tuoi pazienti","piani in PDF, Word o Excel: li convertiamo noi","p_importa"],["Il piano alimentare nel wizard","scegli chi segue cosa: tu, un collega o nessuno","p_wiz_ali"],["Ogni mattina sai chi seguire","peso fermo, sostituzioni ripetute, pasti saltati","p_nutri"],["Invito al paziente","un link su WhatsApp o email, la password è sua","p_invito"]],
+ both:[["Porta i tuoi clienti","schede e piani alimentari, convertiti da noi","p_importa"],["Un cliente, due ambiti","se ha già un account, il tuo piano si aggiunge","p_wiz_cli"],["Il lato allenamento","chi ha bisogno di te oggi, in sala","p_oggi"],["Il lato alimentazione","peso, sostituzioni e correzioni calorie","p_nutri"]],
+ gym:[["Il tuo team","PT e nutrizionisti, ognuno con i suoi ruoli","p_studio"],["Porta dentro tutti i clienti","elenco e schede di tutto il team in una volta","p_importa"],["I trainer vedono i loro clienti","chi ha bisogno di loro, ogni mattina","p_oggi"],["E i nutrizionisti i loro","pazienti, pesi e sostituzioni","p_nutri"]]};
+const CS={
+ pt:[["Apre l’app e sa cosa fare adesso","pre-allenamento, seduta, pasti, abitudini: ora per ora","c_pt_today"],["Si allena un esercizio alla volta","serie, carichi, recuperi e semaforo del giorno","c_pt_focus"],["Ha la scheda sempre in tasca","riscaldamento, superset e video di ogni esercizio","c_pt_work"],["Vede i suoi progressi","serie, livelli, obiettivi e misure","c_path"]],
+ nu:[["Apre l’app e sa cosa mangiare adesso","con grammature e calorie del pasto","c_nu_today"],["Tutti i pasti della giornata","spunta i pasti e vede le calorie del giorno","c_nu_diet"],["La lista della spesa è già pronta","le quantità giuste per tutta la settimana","c_nu_shop"],["Vede i suoi progressi","giorno, settimana, mese e anno","c_nu_path"]],
+ both:[["Apre l’app e sa cosa fare adesso","allenamento e pasti nella stessa giornata","c_pt_today"],["Si allena un esercizio alla volta","serie, carichi e recuperi","c_pt_focus"],["Segue i pasti ora per ora","con grammature e calorie","c_nu_diet"],["Vede i suoi progressi","serie, livelli, obiettivi","c_path"]]};
+CS.gym=CS.both;
+const DUR=6000;
+let ps=0,cs=0,pt=null,ct=null,pPause=false,cPause=false;
+const IMG=n=>"pro-img/"+n+".webp";
+Object.values(PS).flat().concat(Object.values(CS).flat()).forEach(x=>{const i=new Image();i.src=IMG(x[2])});
+
+function renderRoles(){
+ $("#roles").innerHTML=ROLES.map(([k,l])=>`<button type="button" class="chip" aria-pressed="${k==role}" data-r="${k}">${l}</button>`).join("");
+ $("#roleOpts").innerHTML=ROLES.map(([k,l])=>`<label class="opt"><input type="radio" name="role" value="${k}" ${k==role?"checked":""}><span>${l}</span></label>`).join("");
+ const d=R[role];$("#dk").textContent=d.k;$("#dlead").textContent=d.lead;$("#heroNow").textContent=d.now;
+ $("#heroCard").innerHTML=`<div class="mini">CHI HA BISOGNO DI TE OGGI</div>`+d.need.map(n=>`<div class="row"><span class="dot" style="background:${n[2]}"></span><span><b>${n[3]}</b> · ${n[4]}</span></div>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(b){role=b.dataset.r;renderRoles();ps=0;cs=0;renderP();renderC()}});
+document.addEventListener("change",e=>{if(e.target.name=="role"){role=e.target.value;renderRoles();ps=0;cs=0;renderP();renderC()}});
+
+function renderP(){
+ const L=PS[role],x=L[ps];
+ $("#psteps").innerHTML=L.map((s,i)=>`<button type="button" role="tab" aria-selected="${i==ps}" class="step ${i==ps?"on":""}" data-ps="${i}" style="--dur:${DUR}ms"><span class="n">${i+1}</span><span><b>${esc(s[0])}</b><span>${esc(s[1])}</span></span><i class="bar"></i></button>`).join("");
+ $("#wtitle").textContent="Elite GK Pro · "+x[0];
+ $("#pstage").innerHTML=`<div class="shotwin"><img src="${IMG(x[2])}" alt="Schermata: ${esc(x[0])}" id="pimg"></div><div class="cap2"><b>${esc(x[0])}</b> · ${esc(x[1])}</div>`;
+ const im=$("#pimg"),box=im.parentNode,set=()=>{const sh=Math.max(0,im.offsetHeight-box.offsetHeight);im.style.setProperty("--shift",(-sh)+"px");im.style.setProperty("--pt",Math.max(2,Math.min(5,sh/80))+"s")};
+ if(REDUCED)im.style.animation="none";else if(im.complete)set();else im.onload=set;
+ clearTimeout(pt);if(!REDUCED)pt=setTimeout(function nx(){if(!pPause){ps=(ps+1)%L.length;renderP()}else pt=setTimeout(nx,800)},DUR);
+}
+$("#psteps").addEventListener("click",e=>{const b=e.target.closest("[data-ps]");if(b){ps=+b.dataset.ps;renderP()}});
+document.querySelector(".demo").addEventListener("mouseenter",()=>pPause=true);document.querySelector(".demo").addEventListener("mouseleave",()=>pPause=false);
+
+function renderC(){
+ const L=CS[role],x=L[cs];
+ $("#csteps").innerHTML=L.map((s,i)=>`<button type="button" role="tab" aria-selected="${i==cs}" class="cstep ${i==cs?"on":""}" data-cs="${i}"><span class="n">${i+1}</span><span><b>${esc(s[0])}</b><span>${esc(s[1])}</span></span></button>`).join("");
+ $("#cstage").innerHTML=`<img src="${IMG(x[2])}" alt="Schermata dell’app: ${esc(x[0])}">`;
+ clearTimeout(ct);if(!REDUCED)ct=setTimeout(function nx(){if(!cPause){cs=(cs+1)%L.length;renderC()}else ct=setTimeout(nx,800)},DUR-1500);
+}
+$("#csteps").addEventListener("click",e=>{const b=e.target.closest("[data-cs]");if(b){cs=+b.dataset.cs;renderC()}});
+document.querySelector(".cli").addEventListener("mouseenter",()=>cPause=true);document.querySelector(".cli").addEventListener("mouseleave",()=>cPause=false);
+
+/* opzioni del modulo */
+const OPTS={clients:["1-10","11-30","31-60","Più di 60"],price:["Fino a 20 €","20-40 €","40-70 €","70-100 €","Più di 100 €","Non saprei"],model:["Fisso al mese","Per cliente attivo","Non saprei"],tools:["WhatsApp","Excel","PDF o Word","Un’altra app","Carta"]};
+document.querySelectorAll("[data-name]").forEach(el=>{const n=el.dataset.name,multi=el.dataset.multi;el.innerHTML=OPTS[n].map(o=>`<label class="opt"><input type="${multi?"checkbox":"radio"}" name="${n}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join("")});
+
+const isLive=/pages\.dev$|elitegk/.test(location.hostname)&&location.protocol=="https:"&&!/claude|anthropic|usercontent/.test(location.hostname);
+if(!isLive)$("#pv").hidden=false;
+$("#wl").addEventListener("submit",async e=>{e.preventDefault();const f=e.target,fd=new FormData(f),m=$("#msg");
+ const data={role:fd.get("role")||"",name:(fd.get("name")||"").trim(),city:(fd.get("city")||"").trim(),contact:(fd.get("contact")||"").trim(),clients:fd.get("clients")||"",price:fd.get("price")||"",model:fd.get("model")||"",tools:fd.getAll("tools").join(", "),note:(fd.get("note")||"").trim(),website:fd.get("website")||""};
+ if(!data.name||!data.contact){m.style.color="#9A3412";m.textContent="Inserisci nome e un contatto.";return}
+ if(!data.price){m.style.color="#9A3412";m.textContent="Dicci quanto pagheresti: ci aiuta a decidere il prezzo.";return}
+ if(!fd.get("consent")){m.style.color="#9A3412";m.textContent="Serve il consenso per ricontattarti.";return}
+ m.style.color="var(--mu)";m.textContent="Invio…";
+ let ok=false;
+ if(isLive){try{const r=await fetch("/api/waitlist",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});ok=r.ok;if(!ok){const j=await r.json().catch(()=>({}));m.style.color="#9A3412";m.textContent=j.e||"Non è andata, riprova tra poco.";return}}catch(err){m.style.color="#9A3412";m.textContent="Connessione assente, riprova.";return}}
+ else ok=true;
+ $("#formBody").innerHTML=`<div class="thanks"><b>✓</b><h3 style="font-size:24px;margin:8px 0 6px">Sei nella lista, ${esc(data.name.split(" ")[0])}</h3><p style="color:var(--mu);margin:0">Ti scriviamo appena si apre il pilota${data.city?" a "+esc(data.city):""}. Se hai già schede in Excel o PDF, tienile pronte: la conversione la facciamo noi.</p>${isLive?"":`<p style="font-size:13px;color:#9A3412;margin-top:12px">Anteprima: questa iscrizione non è stata salvata.</p>`}</div>`;
+});
+
+renderRoles();renderP();renderC();
+</script>
+</body>
+</html>

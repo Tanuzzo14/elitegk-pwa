@@ -15,10 +15,15 @@ export async function onRequest({request:req,env}){
   const u=String(body.u||"").toLowerCase().trim(),pw=String(body.p||"");
   const adm=env.ADMIN_USER&&env.ADMIN_PASSWORD&&u===env.ADMIN_USER.toLowerCase();
   if(p=="login"&&m=="POST"){
+   await env.DB.prepare("CREATE TABLE IF NOT EXISTS login_fail(k TEXT PRIMARY KEY,n INTEGER NOT NULL,until INTEGER NOT NULL)").run();
+   const ip=req.headers.get("cf-connecting-ip")||"?",keys=["u:"+u,"ip:"+ip],now=Date.now();
+   for(const k of keys){const f=await env.DB.prepare("SELECT n,until FROM login_fail WHERE k=?").bind(k).first();if(f&&f.until>now)return J({e:"Troppi tentativi. Riprova tra "+Math.ceil((f.until-now)/60000)+" minuti."},429)}
+   const fail=async()=>{for(const k of keys){const lim=k[0]=="u"?5:20;const f=await env.DB.prepare("SELECT n FROM login_fail WHERE k=?").bind(k).first();const n=(f?f.n:0)+1;await env.DB.prepare("INSERT INTO login_fail(k,n,until) VALUES(?,?,?) ON CONFLICT(k) DO UPDATE SET n=excluded.n,until=excluded.until").bind(k,n>=lim?0:n,n>=lim?now+15*60000:0).run()}};
    let row=await env.DB.prepare("SELECT * FROM users WHERE username=?").bind(u).first(),ok=false;
    if(adm){ok=eq(pw,env.ADMIN_PASSWORD);if(ok&&!row){await mk(env,u,crypto.randomUUID(),{sport:true,team:[1,4],match:0});row=await env.DB.prepare("SELECT * FROM users WHERE username=?").bind(u).first()}}
    else if(row)ok=eq(await pb(pw,ub(row.salt)),row.hash);
-   if(!ok)return J({e:"Credenziali errate"},401);
+   if(!ok){await fail();return J({e:"Credenziali errate"},401)}
+   await env.DB.prepare("DELETE FROM login_fail WHERE k=?").bind("u:"+u).run();
    return J({ok:1},200,{"set-cookie":await sess(env,row.id)});
   }
   if(p=="register"&&m=="POST"){

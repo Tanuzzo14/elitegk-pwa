@@ -53,7 +53,7 @@ main{max-width:560px;margin:0 auto;padding:0 16px}
 .rg circle{transition:stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1)}
 .sum{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
 .sum .big b{display:block;font-size:26px;font-weight:800}.sum .big small{font-size:10.5px;color:var(--mu);font-weight:700;letter-spacing:.08em}
-.mets{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.mets{display:grid;grid-template-columns:1fr;gap:8px}
 .met{display:flex;align-items:center;gap:8px;min-width:0}.met>div{min-width:0}.met b{display:block;font-size:14px}.met small{display:block;color:var(--mu);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar{height:10px;background:var(--trk);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;border-radius:99px;background:var(--ok);transition:width .5s}
 .bar.ac i{background:var(--ac)}.bar.over i{background:var(--am)}
@@ -571,6 +571,7 @@ function vToday(){if(!hasPlan())return vWelcome();
  return `<header class="hd"><div><div class="ey">${GN[wd]} ${t.getDate()} ${MN[t.getMonth()]}</div><h1>${sal}${nm?", "+esc(nm):""}</h1></div><button class="ib" onclick="setS()" aria-label="Impostazioni">${IC.gear}</button></header>
 <div class="row" style="gap:8px;flex-wrap:wrap"><button class="pill" onclick="go('j')">🔥 ${S.cur} ${S.cur==1?"giorno":"giorni"} di serie</button><button class="pill gd" onclick="go('j')">${lv.l[2]} ${lv.l[1]}</button>${pw?`<span class="pill">Sett. ${pw.n}/${pw.of}${pw.c==4?" · scarico":""}</span>`:""}${Ss.k!="rest"||!p.focus?kb(Ss.k):""}</div>
 <section class="now ${h.tone||""}" aria-live="polite"><div class="ey">Adesso · ${hm(nowH())}</div><div class="nw"><span class="ne" aria-hidden="true">${h.ic}</span><div class="f1"><h2>${esc(h.t)}</h2>${h.s?`<p>${esc(h.s)}</p>`:""}${h.k?`<span class="kc">≈ ${h.k} kcal</span>`:""}</div></div>${h.b?`<button class="btn" onclick="${h.a}">${h.b}</button>`:""}</section>
+<section class="qt"><div class="ey" style="color:var(--gd)">Il pensiero di oggi</div><blockquote>${Q[0]}</blockquote><cite>${Q[1]} · ${Q[2]}</cite></section>
 ${N.also.length?`<div class="also">`+N.also.map(x=>`<button class="al" onclick="${x.a||""}"><span class="ne" aria-hidden="true">${x.ic}</span><span class="f1"><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:""}</span>${x.b?`<span class="go">${x.b} ›</span>`:""}</button>`).join("")+`</div>`:""}
 ${semBox(ds)}
 <section class="card"><div class="ch"><h3>Oggi in sintesi</h3><button class="lk" onclick="pv='d';po=0;go('j')">Dettagli ›</button></div><div class="sum">
@@ -581,7 +582,6 @@ ${p.focus?`<section class="card"><div class="ch"><h3>${p.focus.ic} ${esc(p.focus
  (wi?`<button class="hb ${wi.done>=wi.n?"on":""}" onclick="mrDone()"><span class="hi">🧍</span><span class="f1">${esc(wi.W.n)} · ${wi.done}/${wi.n}<br><small class="mu" style="font-weight:500;text-decoration:none">ogni ${wi.W.every}’ dalle ${st.set.wf} alle ${st.set.wt}</small></span><span class="ck">${wi.done>=wi.n?"✓":"＋"}</span></button>`:"")+`</div><button class="lk" style="margin-top:10px" onclick="setS('hb')">Modifica abitudini ›</button></section>
 ${p.meals?`<section class="card"><div class="ch"><h3>Calorie</h3><span>${fmtK(s.kc)} / ${fmtK(s.kt)} kcal</span></div><div class="bar ${kp>1.1?"over":"ac"}"><i style="width:${Math.min(100,kp*100)}%"></i></div><div class="row" style="margin-top:10px"><span class="f1 xs mu">≈ stime dai pasti del piano spuntati + extra. ${kp>1.1?"Sopra il piano di oggi.":kp>=.9?"In linea con il piano.":"Restano "+fmtK(Math.max(0,s.kt-s.kc))+" kcal."}</span><button class="lk" onclick="xS('${ds}')">＋ Extra</button></div></section>`:""}
 ${N.later.length?`<section class="card"><div class="ch"><h3>Più tardi</h3></div><ul class="tl">`+N.later.slice(0,5).map(x=>`<li><time>${hm(x.at)}</time><div><b>${x.ic} ${esc(x.t)}</b><small>${esc(x.s||"")}</small></div></li>`).join("")+`</ul></section>`:""}
-<section class="qt"><div class="ey" style="color:var(--gd)">Il pensiero di oggi</div><blockquote>${Q[0]}</blockquote><cite>${Q[1]} · ${Q[2]}</cite></section>
 <section class="card ls"><div class="ey">Percorso stoico · lezione ${li+1} di ${LS.length}</div><h3>${les.t}</h3><p>${les.i}</p><div class="pr"><b>Pratica di oggi</b>${les.p}</div><div class="two" style="margin-top:4px"><button class="btn g sm" onclick="lesS(${li})">Come diventare stoico</button><button class="btn sm" onclick="jourS()">${g.jd?"Rivedi l’esame":"Esame serale"}</button></div></section>`}
 
 /* ---------- vista: ALLENAMENTO ---------- */
@@ -608,7 +608,7 @@ function vWork(){const p=PL(),d=selDate(),ds=iso(d),S=ses(d,ds),ex=exOf(d,ds),g=
  if(pw)h+=`<button class="btn g sm" onclick="st.cup[cupK()]=st.cup[cupK()]?0:1;sv();rd()">${cup?"✓ Settimana con coppa + campionato":"Questa settimana c’è anche la coppa?"}</button>`;
  return h+infoBox()}
 function infoBox(){const p=PL();if(!(p.info&&p.info.length)&&!p.prog)return"";
- return `<section class="card info"><details><summary>Il protocollo: regole e progressione ›</summary>`+(p.prog?`<h4>Progressione</h4><table class="tbl"><tr><th>Sett.</th><th>Palestra</th><th>Note</th></tr>${p.prog.map(r=>`<tr><td><b>${r[0]}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</table>`:"")+(p.info||[]).map(x=>`<h4>${esc(x.h)}</h4><ul>${x.l.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>`).join("")+`</details></section>`}
+ return `<section class="card info"><details><summary>${p.prog?"Il protocollo: regole e progressione":"Il tuo programma"} ›</summary>`+(p.prog?`<h4>Progressione</h4><table class="tbl"><tr><th>Sett.</th><th>Palestra</th><th>Note</th></tr>${p.prog.map(r=>`<tr><td><b>${r[0]}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</table>`:"")+(p.info||[]).map(x=>`<h4>${esc(x.h)}</h4><ul>${x.l.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>`).join("")+`</details></section>`}
 
 /* ---------- vista: DIETA ---------- */
 function vDiet(){const p=PL(),d=selDate(),ds=iso(d),g=G(ds),s=dstat(ds),sl=slots(d,ds),isT=ds==iso(today()),h=nowH(),kp=s.kt?s.kc/s.kt:0,S=ses(d,ds);

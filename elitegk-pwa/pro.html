@@ -135,6 +135,14 @@ label.f input,label.f select,label.f textarea{display:block;width:100%;margin-to
 .opt input:checked+span{background:var(--nv);color:#fff;border-color:var(--nv)}
 .opt input:focus-visible+span{outline:3px solid var(--ac2);outline-offset:2px}
 .hint{font-size:13px;color:var(--mu);margin:-4px 0 10px}
+[hidden]{display:none!important}
+.wzp{margin:0 0 18px}.wzh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}.wzh b{font-size:18px}.wzh span{font-size:13px;font-weight:700;color:var(--mu);white-space:nowrap}
+.wzb{height:6px;border-radius:6px;background:#ECE7DD;overflow:hidden}.wzb i{display:block;height:100%;width:20%;background:var(--ac2);border-radius:6px;transition:width .3s}
+.wzn{display:flex;gap:10px;margin-top:6px}.wzn .btn{flex:1}.wzn #wzBack{flex:0 0 auto;padding:14px 18px}.btn.g{background:#F1EEE7;color:var(--tx)}
+.opz{font-weight:600;color:var(--mu);font-size:14px}
+.price{display:flex;align-items:center;gap:10px}.price input{width:140px;padding:13px 14px;border:1px solid var(--bd);border-radius:12px;background:#F8F6F1;font:inherit;font-size:20px;font-weight:800;color:var(--tx)}.price span{font-weight:700;color:var(--mu)}
+.ns{display:inline-flex;gap:8px;align-items:center;margin-top:10px;font-size:14px;font-weight:700;color:var(--mu)}.ns input{width:18px;height:18px}
+.opt.dis span{opacity:.45}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D4654;margin:6px 0 18px}
 .consent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
 .msg{margin-top:12px;font-weight:700;font-size:15px;min-height:1.5em}
@@ -232,7 +240,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
       <div>
         <div class="k">Lista d’attesa</div>
         <h2 id="h4d" style="margin-top:8px">Entra tra i primi del pilota</h2>
-        <p class="lead">Partiamo con pochi professionisti a Catania. Lasciaci i tuoi contatti e dicci quanto ti sembrerebbe giusto pagare: il prezzo lo decidiamo anche con le vostre risposte.</p>
+        <p class="lead">Partiamo con pochi professionisti a Catania. Cinque passi, circa due minuti: raccontaci come lavori oggi e quanto ti sembrerebbe giusto pagare. Le tue risposte decidono come sarà il servizio.</p>
         <div class="faq" style="grid-template-columns:1fr;margin-top:24px">
           <div><b>Quando parte?</b>Con un pilota a Catania: ti scriviamo appena c’è posto, senza impegno.</div>
           <div><b>Devo rifare le schede?</b>No. Ci mandi i file che usi oggi e la conversione la facciamo noi.</div>
@@ -241,37 +249,71 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
       </div>
       <form id="wl" novalidate>
         <div id="formBody">
-          <fieldset>
-            <legend>Chi sei</legend>
-            <div class="opts" id="roleOpts"></div>
-          </fieldset>
-          <div class="two">
-            <label class="f">Nome e cognome<input name="name" autocomplete="name" required maxlength="80"></label>
-            <label class="f">Città<input name="city" autocomplete="address-level2" value="Catania" maxlength="60"></label>
+          <div class="wzp"><div class="wzh"><b id="wzT">Chi sei</b><span id="wzN">Passo 1 di 5</span></div><div class="wzb"><i id="wzBar"></i></div></div>
+          <div class="wz" data-step="0">
+            <fieldset>
+              <legend>Che lavoro fai?</legend>
+              <div class="opts" id="roleOpts"></div>
+            </fieldset>
           </div>
-          <label class="f">Email o cellulare<input name="contact" autocomplete="email" required maxlength="120" placeholder="per avvisarti quando c’è posto"></label>
-          <fieldset>
-            <legend>Quanti clienti segui oggi?</legend>
-            <div class="opts" data-name="clients"></div>
-          </fieldset>
-          <fieldset>
-            <legend>Quanto pagheresti al mese per un servizio così?</legend>
-            <p class="hint">Per tutto: app per i clienti, pannello per te, conversione dei piani.</p>
-            <div class="opts" data-name="price"></div>
-          </fieldset>
-          <fieldset>
-            <legend>Come preferiresti pagare?</legend>
-            <div class="opts" data-name="model"></div>
-          </fieldset>
-          <fieldset>
-            <legend>Cosa usi oggi per i piani? <span style="font-weight:600;color:var(--mu)">(facoltativo)</span></legend>
-            <div class="opts" data-name="tools" data-multi="1"></div>
-          </fieldset>
-          <label class="f">Cosa ti servirebbe di più? <span style="font-weight:600">(facoltativo)</span><textarea name="note" rows="2" maxlength="400"></textarea></label>
-          <label class="hp">Non compilare<input name="website" tabindex="-1" autocomplete="off"></label>
-          <label class="consent"><input type="checkbox" name="consent" required>Acconsento a essere ricontattato per il pilota di Elite GK Pro. I dati servono solo a questo e puoi chiederne la cancellazione quando vuoi.</label>
-          <button class="btn p" type="submit" style="width:100%">Entra nella lista d’attesa</button>
+          <div class="wz" data-step="1" hidden>
+            <fieldset>
+              <legend>Quanti clienti segui oggi?</legend>
+              <div class="opts" data-name="clients"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Cosa usi oggi per i piani? <span class="opz">(anche più di uno)</span></legend>
+              <div class="opts" data-name="tools" data-multi="1"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Come segui i clienti tra un controllo e l’altro?</legend>
+              <div class="opts" data-name="follow"></div>
+            </fieldset>
+          </div>
+          <div class="wz" data-step="2" hidden>
+            <fieldset>
+              <legend>Qual è la tua difficoltà più grande?</legend>
+              <p class="hint">Scegline fino a 2.</p>
+              <div class="opts" data-name="pain" data-multi="1" data-max="2"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Quanto tempo ti prendono a settimana piani e messaggi ai clienti?</legend>
+              <div class="opts" data-name="hours"></div>
+            </fieldset>
+          </div>
+          <div class="wz" data-step="3" hidden>
+            <fieldset>
+              <legend>Quanto pagheresti al mese per un servizio così?</legend>
+              <p class="hint">Per tutto: app per i tuoi clienti, pannello per te, conversione dei piani che usi già. Scrivi la cifra che ti sembra giusta.</p>
+              <div class="price"><input name="price" type="number" inputmode="numeric" min="0" max="9999" step="1" placeholder="es. 30" aria-label="Euro al mese"><span>€ al mese</span></div>
+              <label class="ns"><input type="checkbox" name="pns"> Non saprei</label>
+            </fieldset>
+            <fieldset>
+              <legend>Come preferiresti pagare?</legend>
+              <div class="opts" data-name="model"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Proveresti il pilota con alcuni tuoi clienti?</legend>
+              <div class="opts" data-name="pilot"></div>
+            </fieldset>
+          </div>
+          <div class="wz" data-step="4" hidden>
+            <div class="two">
+              <label class="f">Nome e cognome<input name="name" autocomplete="name" required maxlength="80"></label>
+              <label class="f">Città<input name="city" autocomplete="address-level2" value="Catania" maxlength="60"></label>
+            </div>
+            <label class="f">Email o cellulare<input name="contact" autocomplete="email" required maxlength="120" placeholder="per avvisarti quando c’è posto"></label>
+            <fieldset>
+              <legend>Ti va una chiacchierata di 15 minuti?</legend>
+              <p class="hint">Solo per ascoltare come lavori, nessuna vendita.</p>
+              <div class="opts" data-name="interview"></div>
+            </fieldset>
+            <label class="f">Cosa ti servirebbe di più? <span style="font-weight:600">(facoltativo)</span><textarea name="note" rows="2" maxlength="400"></textarea></label>
+            <label class="hp">Non compilare<input name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="consent"><input type="checkbox" name="consent" required>Acconsento a essere ricontattato per il pilota di Elite GK Pro. I dati servono solo a questo e puoi chiederne la cancellazione quando vuoi.</label>
+          </div>
           <div class="msg" id="msg" role="status" aria-live="polite"></div>
+          <div class="wzn"><button type="button" class="btn g" id="wzBack" hidden>Indietro</button><button type="button" class="btn p" id="wzNext">Avanti</button><button class="btn p" type="submit" id="wzSend" hidden>Invia le risposte</button></div>
         </div>
       </form>
     </div>
@@ -340,24 +382,47 @@ function renderC(){
 $("#csteps").addEventListener("click",e=>{const b=e.target.closest("[data-cs]");if(b){cs=+b.dataset.cs;renderC()}});
 document.querySelector(".cli").addEventListener("mouseenter",()=>cPause=true);document.querySelector(".cli").addEventListener("mouseleave",()=>cPause=false);
 
-/* opzioni del modulo */
-const OPTS={clients:["1-10","11-30","31-60","Più di 60"],price:["Fino a 20 €","20-40 €","40-70 €","70-100 €","Più di 100 €","Non saprei"],model:["Fisso al mese","Per cliente attivo","Non saprei"],tools:["WhatsApp","Excel","PDF o Word","Un’altra app","Carta"]};
+/* modulo a passi */
+const OPTS={clients:["1-10","11-30","31-60","Più di 60"],tools:["WhatsApp","Excel","PDF o Word","Un’altra app","Carta"],
+ follow:["Li sento su WhatsApp quando serve","Check-in fisso ogni settimana","Solo al controllo successivo","Con un’app"],
+ pain:["Clienti che mollano il piano dopo qualche settimana","Tempo perso a scrivere e aggiornare i piani","Rincorrere i clienti su WhatsApp","Non sapere chi lo sta seguendo e chi no","Fare rinnovare i clienti"],
+ hours:["Meno di 2 ore","2-5 ore","5-10 ore","Più di 10 ore"],model:["Fisso al mese","Per cliente attivo","Non saprei"],
+ pilot:["Sì","Forse, voglio vederlo prima","No"],interview:["Sì, volentieri","No, grazie"]};
 document.querySelectorAll("[data-name]").forEach(el=>{const n=el.dataset.name,multi=el.dataset.multi;el.innerHTML=OPTS[n].map(o=>`<label class="opt"><input type="${multi?"checkbox":"radio"}" name="${n}" value="${esc(o)}"><span>${esc(o)}</span></label>`).join("")});
+document.querySelectorAll("[data-max]").forEach(el=>el.addEventListener("change",()=>{const mx=+el.dataset.max,bx=[...el.querySelectorAll("input")],n=bx.filter(x=>x.checked).length;bx.forEach(x=>{const off=!x.checked&&n>=mx;x.disabled=off;x.parentNode.classList.toggle("dis",off)})}));
+const pIn=$("#wl [name=price]"),pNs=$("#wl [name=pns]");
+pNs.addEventListener("change",()=>{pIn.disabled=pNs.checked;if(pNs.checked)pIn.value=""});
+const WT=["Chi sei","Come lavori oggi","Le difficoltà","Il valore","I tuoi contatti"],WS=[...document.querySelectorAll(".wz")];let wi=0;
+function wShow(){WS.forEach((x,i)=>x.hidden=i!=wi);$("#wzT").textContent=WT[wi];$("#wzN").textContent=`Passo ${wi+1} di ${WS.length}`;$("#wzBar").style.width=((wi+1)/WS.length*100)+"%";
+ $("#wzBack").hidden=wi==0;$("#wzNext").hidden=wi==WS.length-1;$("#wzSend").hidden=wi!=WS.length-1;$("#msg").textContent=""}
+function wErr(t){const m=$("#msg");m.style.color="#9A3412";m.textContent=t;return false}
+function wOk(){const fd=new FormData($("#wl"));
+ if(wi==0&&!fd.get("role"))return wErr("Scegli il tuo ruolo.");
+ if(wi==1&&!fd.get("clients"))return wErr("Dicci quanti clienti segui.");
+ if(wi==1&&!fd.get("follow"))return wErr("Dicci come segui i clienti tra un controllo e l’altro.");
+ if(wi==2&&!fd.getAll("pain").length)return wErr("Scegli almeno una difficoltà.");
+ if(wi==2&&!fd.get("hours"))return wErr("Dicci quanto tempo ti prendono.");
+ if(wi==3){const v=pIn.value.trim();if(!pNs.checked&&(v===""||!(+v>=0)||+v>9999))return wErr("Scrivi una cifra al mese, oppure spunta «Non saprei».");if(!fd.get("pilot"))return wErr("Dicci se proveresti il pilota.")}
+ return true}
+function wGo(d){if(d>0&&!wOk())return;wi=Math.max(0,Math.min(WS.length-1,wi+d));wShow();const t=$("#wl").getBoundingClientRect().top;if(t<0||t>innerHeight*.4)$("#wl").scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"});const f=WS[wi].querySelector("input:not([type=hidden]):not([disabled])");if(f&&matchMedia("(pointer:fine)").matches)f.focus({preventScroll:true})}
+$("#wzNext").addEventListener("click",()=>wGo(1));$("#wzBack").addEventListener("click",()=>wGo(-1));
+$("#wl").addEventListener("keydown",e=>{if(e.key=="Enter"&&e.target.tagName=="INPUT"&&wi<WS.length-1){e.preventDefault();wGo(1)}});
 
 const isLive=/pages\.dev$|elitegk/.test(location.hostname)&&location.protocol=="https:"&&!/claude|anthropic|usercontent/.test(location.hostname);
 if(!isLive)$("#pv").hidden=false;
-$("#wl").addEventListener("submit",async e=>{e.preventDefault();const f=e.target,fd=new FormData(f),m=$("#msg");
- const data={role:fd.get("role")||"",name:(fd.get("name")||"").trim(),city:(fd.get("city")||"").trim(),contact:(fd.get("contact")||"").trim(),clients:fd.get("clients")||"",price:fd.get("price")||"",model:fd.get("model")||"",tools:fd.getAll("tools").join(", "),note:(fd.get("note")||"").trim(),website:fd.get("website")||""};
- if(!data.name||!data.contact){m.style.color="#9A3412";m.textContent="Inserisci nome e un contatto.";return}
- if(!data.price){m.style.color="#9A3412";m.textContent="Dicci quanto pagheresti: ci aiuta a decidere il prezzo.";return}
- if(!fd.get("consent")){m.style.color="#9A3412";m.textContent="Serve il consenso per ricontattarti.";return}
+$("#wl").addEventListener("submit",async e=>{e.preventDefault();if(wi<WS.length-1){wGo(1);return}const f=e.target,fd=new FormData(f),m=$("#msg");
+ const pr=pNs.checked?"Non saprei":(pIn.value.trim()?Math.round(+pIn.value)+" €":"");
+ const data={role:fd.get("role")||"",name:(fd.get("name")||"").trim(),city:(fd.get("city")||"").trim(),contact:(fd.get("contact")||"").trim(),clients:fd.get("clients")||"",price:pr,model:fd.get("model")||"",tools:fd.getAll("tools").join(", "),
+  follow:fd.get("follow")||"",pain:fd.getAll("pain").join(" | "),hours:fd.get("hours")||"",pilot:fd.get("pilot")||"",interview:fd.get("interview")||"",note:(fd.get("note")||"").trim(),website:fd.get("website")||""};
+ if(!data.name||!data.contact){wErr("Inserisci nome e un contatto.");return}
+ if(!fd.get("consent")){wErr("Serve il consenso per ricontattarti.");return}
  m.style.color="var(--mu)";m.textContent="Invio…";
  let ok=false;
- if(isLive){try{const r=await fetch("/api/waitlist",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});ok=r.ok;if(!ok){const j=await r.json().catch(()=>({}));m.style.color="#9A3412";m.textContent=j.e||"Non è andata, riprova tra poco.";return}}catch(err){m.style.color="#9A3412";m.textContent="Connessione assente, riprova.";return}}
+ if(isLive){try{const r=await fetch("/api/waitlist",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});ok=r.ok;if(!ok){const j=await r.json().catch(()=>({}));wErr(j.e||"Non è andata, riprova tra poco.");return}}catch(err){wErr("Connessione assente, riprova.");return}}
  else ok=true;
- $("#formBody").innerHTML=`<div class="thanks"><b>✓</b><h3 style="font-size:24px;margin:8px 0 6px">Sei nella lista, ${esc(data.name.split(" ")[0])}</h3><p style="color:var(--mu);margin:0">Ti scriviamo appena si apre il pilota${data.city?" a "+esc(data.city):""}. Se hai già schede in Excel o PDF, tienile pronte: la conversione la facciamo noi.</p>${isLive?"":`<p style="font-size:13px;color:#9A3412;margin-top:12px">Anteprima: questa iscrizione non è stata salvata.</p>`}</div>`;
+ $("#formBody").innerHTML=`<div class="thanks"><b>✓</b><h3 style="font-size:24px;margin:8px 0 6px">Grazie, ${esc(data.name.split(" ")[0])}!</h3><p style="color:var(--mu);margin:0">Le tue risposte servono alla ricerca per il pilota${data.city?" a "+esc(data.city):""}.${data.interview.startsWith("Sì")?" Ti scrivo per fissare i 15 minuti.":" Ti scriviamo appena si apre il pilota."} Se hai già schede in Excel o PDF, tienile pronte: la conversione la facciamo noi.</p>${isLive?"":`<p style="font-size:13px;color:#9A3412;margin-top:12px">Anteprima: questa iscrizione non è stata salvata.</p>`}</div>`;
 });
-
+wShow();
 renderRoles();renderP();renderC();
 </script>
 </body>

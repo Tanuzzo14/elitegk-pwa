@@ -143,6 +143,13 @@ label.f input,label.f select,label.f textarea{display:block;width:100%;margin-to
 .price{display:flex;align-items:center;gap:10px}.price input{width:140px;padding:13px 14px;border:1px solid var(--bd);border-radius:12px;background:#F8F6F1;font:inherit;font-size:20px;font-weight:800;color:var(--tx)}.price span{font-weight:700;color:var(--mu)}
 .ns{display:inline-flex;gap:8px;align-items:center;margin-top:10px;font-size:14px;font-weight:700;color:var(--mu)}.ns input{width:18px;height:18px}
 .opt.dis span{opacity:.45}
+.tm{font-weight:600;opacity:.85}
+.fw{margin:16px 0 0;font-size:14px;color:#C9D6E6}.fw a{color:#FDBA74;font-weight:700}
+.stick{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--nv);color:#fff;border-radius:16px;padding:10px 10px 10px 16px;box-shadow:0 10px 30px rgba(11,31,58,.35);font-weight:700;font-size:14px}
+.stick .btn{min-height:44px;padding:10px 16px;font-size:15px;white-space:nowrap}
+@media (min-width:901px){.stick{display:none!important}}
+.shr{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}.shr .btn{min-height:44px;padding:10px 16px;font-size:15px}
+.btn.wa{background:#1F9D55;color:#fff}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D4654;margin:6px 0 18px}
 .consent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
 .msg{margin-top:12px;font-weight:700;font-size:15px;min-height:1.5em}
@@ -171,7 +178,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
   <div class="wrap">
     <nav class="nav" aria-label="Principale">
       <div class="logo"><i>GK</i>Elite GK Pro</div>
-      <a class="btn w" href="#lista">Lista d’attesa</a>
+      <a class="btn w go" href="#lista">Lista d’attesa</a>
     </nav>
     <div class="hero">
       <div>
@@ -179,10 +186,11 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
         <h1>Tu prescrivi.<br>L’app lo fa seguire, ogni giorno.</h1>
         <p class="sub">I tuoi clienti trovano allenamento, pasti e abitudini ora per ora. Tu vedi ogni mattina chi ha bisogno di te, senza inseguire nessuno su WhatsApp.</p>
         <div class="roles">
-          <p id="rl">Sono:</p>
+          <p id="rl">Sono un:</p>
           <div class="chips" role="group" aria-labelledby="rl" id="roles"></div>
         </div>
-        <div class="cta"><a class="btn p" href="#demo">Guarda come funziona</a><a class="btn o" href="#lista">Entra nella lista d’attesa</a></div>
+        <div class="cta"><a class="btn p go" href="#lista" data-skip="1">Entra nella lista d’attesa <span class="tm">· 2 min</span></a><a class="btn o" href="#demo">Guarda come funziona</a></div>
+        <p class="fw">Non sei un professionista? <a href="#" class="share" data-share="hero">Gira la pagina a un PT o nutrizionista che conosci →</a></p>
       </div>
       <div class="heroart" aria-hidden="true">
         <div class="float f1" id="heroCard"></div>
@@ -319,6 +327,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
     </div>
   </section>
 </main>
+<div class="stick" id="stick" hidden><span>Sei un PT o un nutrizionista?</span><a class="btn p go" href="#lista" data-skip="1">Lista d’attesa</a></div>
 <footer><div class="wrap">Elite GK Pro · Italia · <a href="/">Accedi all’app</a></div></footer>
 
 <script>
@@ -413,16 +422,29 @@ if(!isLive)$("#pv").hidden=false;
 $("#wl").addEventListener("submit",async e=>{e.preventDefault();if(wi<WS.length-1){wGo(1);return}const f=e.target,fd=new FormData(f),m=$("#msg");
  const pr=pNs.checked?"Non saprei":(pIn.value.trim()?Math.round(+pIn.value)+" €":"");
  const data={role:fd.get("role")||"",name:(fd.get("name")||"").trim(),city:(fd.get("city")||"").trim(),contact:(fd.get("contact")||"").trim(),clients:fd.get("clients")||"",price:pr,model:fd.get("model")||"",tools:fd.getAll("tools").join(", "),
-  follow:fd.get("follow")||"",pain:fd.getAll("pain").join(" | "),hours:fd.get("hours")||"",pilot:fd.get("pilot")||"",interview:fd.get("interview")||"",note:(fd.get("note")||"").trim(),website:fd.get("website")||""};
+  follow:fd.get("follow")||"",pain:fd.getAll("pain").join(" | "),hours:fd.get("hours")||"",pilot:fd.get("pilot")||"",interview:fd.get("interview")||"",src:SRC,note:(fd.get("note")||"").trim(),website:fd.get("website")||""};
  if(!data.name||!data.contact){wErr("Inserisci nome e un contatto.");return}
  if(!fd.get("consent")){wErr("Serve il consenso per ricontattarti.");return}
  m.style.color="var(--mu)";m.textContent="Invio…";
  let ok=false;
  if(isLive){try{const r=await fetch("/api/waitlist",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});ok=r.ok;if(!ok){const j=await r.json().catch(()=>({}));wErr(j.e||"Non è andata, riprova tra poco.");return}}catch(err){wErr("Connessione assente, riprova.");return}}
  else ok=true;
- $("#formBody").innerHTML=`<div class="thanks"><b>✓</b><h3 style="font-size:24px;margin:8px 0 6px">Grazie, ${esc(data.name.split(" ")[0])}!</h3><p style="color:var(--mu);margin:0">Le tue risposte servono alla ricerca per il pilota.${data.interview.startsWith("Sì")?" Ti scrivo per fissare i 15 minuti.":" Ti scriviamo appena si apre il pilota."} Se hai già schede in Excel o PDF, tienile pronte: la conversione la facciamo noi.</p>${isLive?"":`<p style="font-size:13px;color:#9A3412;margin-top:12px">Anteprima: questa iscrizione non è stata salvata.</p>`}</div>`;
+ $("#formBody").innerHTML=`<div class="thanks"><b>✓</b><h3 style="font-size:24px;margin:8px 0 6px">Grazie, ${esc(data.name.split(" ")[0])}!</h3><p style="color:var(--mu);margin:0">Le tue risposte servono alla ricerca per il pilota.${data.interview.startsWith("Sì")?" Ti scrivo per fissare i 15 minuti.":" Ti scriviamo appena si apre il pilota."} Se hai già schede in Excel o PDF, tienile pronte: la conversione la facciamo noi.</p><p style="margin:18px 0 0;font-weight:700">Conosci un collega a cui potrebbe servire?</p><div class="shr"><button type="button" class="btn wa" data-share="thanks">Giralo su WhatsApp</button><button type="button" class="btn g" data-copy="1">Copia il link</button></div>${isLive?"":`<p style="font-size:13px;color:#9A3412;margin-top:12px">Anteprima: questa iscrizione non è stata salvata.</p>`}</div>`;
 });
 wShow();
+/* crescita: CTA, barra fissa, condivisione, provenienza */
+const SRC=(()=>{const q=new URLSearchParams(location.search);let v=q.get("src")||q.get("utm_source")||"";if(!v&&document.referrer){try{const h=new URL(document.referrer).hostname;if(h!=location.hostname)v=h.replace(/^www\./,"")}catch(e){}}return v.slice(0,40)})();
+document.addEventListener("click",e=>{const g=e.target.closest(".go");if(!g)return;e.preventDefault();
+ if(g.dataset.skip&&wi==0){const r=document.querySelector(`#roleOpts input[value="${role}"]`);if(r)r.checked=true;wi=1;wShow()}
+ const tgt=innerWidth<=900?$("#wl"):$("#lista");tgt.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"})});
+const SHARE_URL=location.origin+location.pathname+"?src=passaparola",SHARE_TXT="Ciao! Sto facendo una ricerca per il mio project work su un'app per personal trainer e nutrizionisti. Ti va di rispondere a 5 domande veloci? Ci vogliono 2 minuti: "+SHARE_URL;
+const COL_TXT="Ho appena risposto a una ricerca su un'app per personal trainer e nutrizionisti: fa seguire i piani ai clienti ogni giorno. Sono 2 minuti, dacci un'occhiata: "+location.origin+location.pathname+"?src=collega";
+async function share(k){const t=k=="thanks"?COL_TXT:SHARE_TXT;try{if(navigator.share){await navigator.share({title:"Elite GK Pro",text:t});return}}catch(e){return}open("https://wa.me/?text="+encodeURIComponent(t),"_blank","noopener")}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(b){e.preventDefault();share(b.dataset.share)}});
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-copy]");if(!b)return;try{await navigator.clipboard.writeText(SHARE_URL);b.textContent="Link copiato ✓"}catch(err){prompt("Copia il link:",SHARE_URL)}});
+if("IntersectionObserver"in window){const st=$("#stick"),vis={hero:true,form:false};const upd=()=>st.hidden=vis.hero||vis.form||!$("#formBody .wz");
+ new IntersectionObserver(es=>{vis.hero=es[0].isIntersecting;upd()}).observe(document.querySelector(".hero .cta"));
+ new IntersectionObserver(es=>{vis.form=es[0].isIntersecting;upd()},{rootMargin:"0px 0px -30% 0px"}).observe($("#wl"));}
 renderRoles();renderP();renderC();
 </script>
 </body>

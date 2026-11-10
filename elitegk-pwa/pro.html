@@ -86,7 +86,7 @@ h2{font-size:38px;line-height:1.1;letter-spacing:-.02em;margin:0}
 .shotwin img{position:absolute;left:0;top:0;width:100%;display:block;animation:pan var(--pt,6s) ease-in-out .6s both}
 @keyframes pan{to{transform:translateY(var(--shift,0px))}}
 .cap2{padding:14px 18px;border-top:1px solid #EEEAE2;font-size:14px;color:#3D4654;background:#fff}
-.cap2 b{color:var(--tx)}
+.cap2 b{color:var(--tx)}.zoomh{display:none;font-size:12px;color:var(--mu);margin-top:4px}
 .scr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;animation:in .45s cubic-bezier(.2,.8,.2,1) both}
 .real{display:inline-flex;align-items:center;gap:6px;background:#DCEFE4;color:var(--okd);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:800;margin-top:12px}
 /* demo cliente */
@@ -146,7 +146,7 @@ label.f input,label.f select,label.f textarea{display:block;width:100%;margin-to
 .tm{font-weight:600;opacity:.85}
 .fw{margin:16px 0 0;font-size:14px;color:#C9D6E6}.fw a{color:#FDBA74;font-weight:700}
 .stick{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--nv);color:#fff;border-radius:16px;padding:10px 10px 10px 16px;box-shadow:0 10px 30px rgba(11,31,58,.35);font-weight:700;font-size:14px}
-.stick .btn{min-height:44px;padding:10px 16px;font-size:15px;white-space:nowrap}
+.stick span{min-width:0;flex:1;line-height:1.25}.stick .btn{flex:0 0 auto;min-height:44px;padding:10px 16px;font-size:15px;white-space:nowrap}
 @media (min-width:901px){.stick{display:none!important}}
 .shr{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}.shr .btn{min-height:44px;padding:10px 16px;font-size:15px}
 .btn.wa{background:#1F9D55;color:#fff}
@@ -165,7 +165,12 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
  .hero,.demo,.cli,.conv,.formw{grid-template-columns:1fr}
  h1{font-size:40px}h2{font-size:30px}
  .f2{width:240px}
- .steps{flex-direction:row;overflow-x:auto}.step{min-width:220px}
+ .demo>*,.cli>*,.conv>*,.hero>*{min-width:0}
+ .steps{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}.step{min-width:78%;scroll-snap-align:start}
+ .files{overflow:hidden}
+ .win{min-height:0}
+ .shotwin{height:auto}.shotwin img{position:static;animation:none!important;cursor:zoom-in}
+ .zoomh{display:block}
  .faq{grid-template-columns:1fr}.conv{padding:28px}
  .cli .phone{order:-1}
 }
@@ -367,18 +372,20 @@ function renderRoles(){
  const d=R[role];$("#dk").textContent=d.k;$("#dlead").textContent=d.lead;$("#heroNow").textContent=d.now;
  $("#heroCard").innerHTML=`<div class="mini">CHI HA BISOGNO DI TE OGGI</div>`+d.need.map(n=>`<div class="row"><span class="dot" style="background:${n[2]}"></span><span><b>${n[3]}</b> · ${n[4]}</span></div>`).join("");
 }
-document.addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(b){role=b.dataset.r;renderRoles();ps=0;cs=0;renderP();renderC()}});
+let roleChosen=false;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-r]");if(b){roleChosen=true;role=b.dataset.r;renderRoles();ps=0;cs=0;renderP();renderC()}});
 document.addEventListener("change",e=>{if(e.target.name=="role"){role=e.target.value;renderRoles();ps=0;cs=0;renderP();renderC()}});
 
 function renderP(){
  const L=PS[role],x=L[ps];
  $("#psteps").innerHTML=L.map((s,i)=>`<button type="button" role="tab" aria-selected="${i==ps}" class="step ${i==ps?"on":""}" data-ps="${i}" style="--dur:${DUR}ms"><span class="n">${i+1}</span><span><b>${esc(s[0])}</b><span>${esc(s[1])}</span></span><i class="bar"></i></button>`).join("");
  $("#wtitle").textContent="Elite GK Pro · "+x[0];
- $("#pstage").innerHTML=`<div class="shotwin"><img src="${IMG(x[2])}" alt="Schermata: ${esc(x[0])}" id="pimg"></div><div class="cap2"><b>${esc(x[0])}</b> · ${esc(x[1])}</div>`;
+ $("#pstage").innerHTML=`<div class="shotwin"><img src="${IMG(x[2])}" alt="Schermata: ${esc(x[0])}" id="pimg"></div><div class="cap2"><b>${esc(x[0])}</b> · ${esc(x[1])}<span class="zoomh">Tocca l’immagine per ingrandirla</span></div>`;
  const im=$("#pimg"),box=im.parentNode,set=()=>{const sh=Math.max(0,im.offsetHeight-box.offsetHeight);im.style.setProperty("--shift",(-sh)+"px");im.style.setProperty("--pt",Math.max(2,Math.min(5,sh/80))+"s")};
  if(REDUCED)im.style.animation="none";else if(im.complete)set();else im.onload=set;
  clearTimeout(pt);if(!REDUCED)pt=setTimeout(function nx(){if(!pPause){ps=(ps+1)%L.length;renderP()}else pt=setTimeout(nx,800)},DUR);
 }
+$("#pstage").addEventListener("click",e=>{if(e.target.id=="pimg"&&innerWidth<=900)open(e.target.src,"_blank","noopener")});
 $("#psteps").addEventListener("click",e=>{const b=e.target.closest("[data-ps]");if(b){ps=+b.dataset.ps;renderP()}});
 document.querySelector(".demo").addEventListener("mouseenter",()=>pPause=true);document.querySelector(".demo").addEventListener("mouseleave",()=>pPause=false);
 
@@ -435,7 +442,7 @@ wShow();
 /* crescita: CTA, barra fissa, condivisione, provenienza */
 const SRC=(()=>{const q=new URLSearchParams(location.search);let v=q.get("src")||q.get("utm_source")||"";if(!v&&document.referrer){try{const h=new URL(document.referrer).hostname;if(h!=location.hostname)v=h.replace(/^www\./,"")}catch(e){}}return v.slice(0,40)})();
 document.addEventListener("click",e=>{const g=e.target.closest(".go");if(!g)return;e.preventDefault();
- if(g.dataset.skip&&wi==0){const r=document.querySelector(`#roleOpts input[value="${role}"]`);if(r)r.checked=true;wi=1;wShow()}
+ if(g.dataset.skip&&roleChosen&&wi==0){const r=document.querySelector(`#roleOpts input[value="${role}"]`);if(r)r.checked=true;wi=1;wShow()}
  const tgt=innerWidth<=900?$("#wl"):$("#lista");tgt.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"})});
 const SHARE_URL=location.origin+location.pathname+"?src=passaparola",SHARE_TXT="Ciao! Sto facendo una ricerca per il mio project work su un'app per personal trainer e nutrizionisti. Ti va di rispondere a 5 domande veloci? Ci vogliono 2 minuti: "+SHARE_URL;
 const COL_TXT="Ho appena risposto a una ricerca su un'app per personal trainer e nutrizionisti: fa seguire i piani ai clienti ogni giorno. Sono 2 minuti, dacci un'occhiata: "+location.origin+location.pathname+"?src=collega";

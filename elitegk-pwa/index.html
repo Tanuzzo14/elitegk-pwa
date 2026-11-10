@@ -183,6 +183,8 @@ main>:nth-child(2){animation-delay:.03s}main>:nth-child(3){animation-delay:.06s}
 .sem.g{background:rgba(31,157,85,.10)}.sem.y{background:rgba(227,160,8,.15)}.sem.r{background:rgba(232,89,12,.13)}
 .sst{display:inline-block;background:var(--nv);color:#fff;border-radius:6px;padding:1px 6px;font-size:11px;font-weight:800;margin-right:6px;vertical-align:2px}
 :root[data-theme="dark"] .sst{background:#EDF1F7;color:#0B1F3A}
+:root[data-theme="dark"] .chip.on{background:#EDF1F7;border-color:#EDF1F7;color:#0B1F3A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip.on{background:#EDF1F7;border-color:#EDF1F7;color:#0B1F3A}:root:not([data-theme="light"]) .sst{background:#EDF1F7;color:#0B1F3A}}
 .rec{font-size:12px;color:var(--mu);font-weight:700;margin-left:6px}
 .rwd{background:linear-gradient(150deg,#4A2C17 0%,#8C5A2B 100%);color:#fff;border-radius:22px;padding:18px;margin:12px 0;box-shadow:0 12px 30px rgba(74,44,23,.28)}
 .rwd h2{margin:6px 0 2px;font-size:21px}.rwd p{margin:0;color:rgba(255,255,255,.82);font-size:14px}.rwd .btn{background:#fff;color:#4A2C17}
@@ -648,13 +650,14 @@ function bars(days){const W=320,H=150,bw=(W-20)/days.length;let s=`<svg viewBox=
  return s+`</svg>`}
 function agr(dsList){const v=dsList.filter(inR).map(dstat);const n=v.length,av=f=>{const a=v.map(f).filter(x=>x!=null&&x>=0);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
  const rw=dsList.filter(inR).filter(d=>G(d).rw).length;
- return{n,sc:av(x=>x.sc),sl:av(x=>x.sl||null),kc:av(x=>x.kc||null),hb:av(x=>x.hb),fo:av(x=>x.fo),woD:v.filter(x=>x.wo==100).length,woP:v.filter(x=>x.wo>=0).length,full:v.filter(x=>x.sc>=70).length,j:v.filter(x=>x.j).length,rw}}
+  const td=iso(today()),dl=dsList.filter(inR),kv=dl.map((d,i)=>[d,v[i]]).filter(([d,x])=>x.kc>0),kd=kv.filter(([d,x])=>d!=td||x.mp>=100),kk=(kd.length?kd:kv).map(([d,x])=>x.kc),kcA=kk.length?kk.reduce((a,b)=>a+b,0)/kk.length:null;
+ return{n,sc:av(x=>x.sc),sl:av(x=>x.sl||null),kc:kcA,hb:av(x=>x.hb),fo:av(x=>x.fo),woD:v.filter(x=>x.wo==100).length,woP:v.filter(x=>x.wo>=0).length,full:v.filter(x=>x.sc>=70).length,j:v.filter(x=>x.j).length,rw}}
 function statGrid(a,period){const p=PL(),f=(v,u="")=>v==null?"—":Math.round(v)+u;
  const c=[`<div class="st"><small>PUNTEGGIO MEDIO</small><b style="color:${a.sc==null?"var(--tx)":scC(a.sc)}">${f(a.sc)}</b><em>${a.full} giorni ≥ 70</em></div>`];
  if(p.focus)c.push(`<div class="st"><small>${esc(p.focus.n.toUpperCase())}</small><b>${f(a.fo,"%")}</b><em>dell’obiettivo giornaliero</em></div>`);
  if(a.woP||!p.focus)c.push(`<div class="st"><small>ALLENAMENTI</small><b>${a.woD}<span class="mu" style="font-size:15px">/${a.woP}</span></b><em>completati ${period}</em></div>`);
  c.push(`<div class="st"><small>SONNO MEDIO</small><b>${a.sl==null?"—":n1(a.sl)+" h"}</b><em>obiettivo 7,5 h</em></div>`);
- c.push(`<div class="st"><small>KCAL MEDIE</small><b>${a.kc==null?"—":fmtK(a.kc)}</b><em>nei giorni registrati</em></div>`);
+ c.push(`<div class="st"><small>KCAL MEDIE</small><b>${a.kc==null?"—":fmtK(a.kc)}</b><em>nei giorni completi</em></div>`);
  c.push(`<div class="st"><small>ABITUDINI</small><b>${f(a.hb,"%")}</b><em>completate in media</em></div>`);
  c.push(`<div class="st"><small>ESAMI SERALI</small><b>${a.j}<span class="mu" style="font-size:15px">/${a.n}</span></b><em>giorni chiusi da stoico</em></div>`);
  if(p.reward)c.push(`<div class="st"><small>PREMI</small><b>${p.reward.ic} ${a.rw}</b><em>${esc(p.reward.n.toLowerCase())} riscattati</em></div>`);

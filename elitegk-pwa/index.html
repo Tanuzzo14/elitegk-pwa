@@ -648,10 +648,11 @@ function bars(days){const W=320,H=150,bw=(W-20)/days.length;let s=`<svg viewBox=
  days.forEach((d,i)=>{const x=10+i*bw+bw*.18,w=bw*.64;if(d.s!=null){const v=Math.max(2,d.s);s+=`<rect x="${x}" y="${y(v)}" width="${w}" height="${y(0)-y(v)}" rx="${Math.min(6,w/3)}" fill="${scC(d.s)}"/><text x="${x+w/2}" y="${y(v)-5}" font-size="11" font-weight="700" fill="var(--tx)" text-anchor="middle">${d.s}</text>`}else s+=`<rect x="${x}" y="${y(0)-3}" width="${w}" height="3" rx="1.5" fill="var(--trk)"/>`;
   s+=`<text x="${x+w/2}" y="${H-8}" font-size="11" fill="${d.t?"var(--tx)":"var(--mu)"}" font-weight="${d.t?800:600}" text-anchor="middle">${d.l}</text>`});
  return s+`</svg>`}
-function agr(dsList){const v=dsList.filter(inR).map(dstat);const n=v.length,av=f=>{const a=v.map(f).filter(x=>x!=null&&x>=0);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
- const rw=dsList.filter(inR).filter(d=>G(d).rw).length;
-  const td=iso(today()),dl=dsList.filter(inR),kv=dl.map((d,i)=>[d,v[i]]).filter(([d,x])=>x.kc>0),kd=kv.filter(([d,x])=>d!=td||x.mp>=100),kk=(kd.length?kd:kv).map(([d,x])=>x.kc),kcA=kk.length?kk.reduce((a,b)=>a+b,0)/kk.length:null;
- return{n,sc:av(x=>x.sc),sl:av(x=>x.sl||null),kc:kcA,hb:av(x=>x.hb),fo:av(x=>x.fo),woD:v.filter(x=>x.wo==100).length,woP:v.filter(x=>x.wo>=0).length,full:v.filter(x=>x.sc>=70).length,j:v.filter(x=>x.j).length,rw}}
+function agr(dsList){const td=iso(today()),dl=dsList.filter(inR),v=dl.map(dstat),n=v.length,pv=dl.length>1?v.filter((x,i)=>dl[i]!=td):v,av=(f,arr=pv)=>{const a=arr.map(f).filter(x=>x!=null&&x>=0);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
+ const rw=dl.filter(d=>G(d).rw).length,isT=i=>dl[i]==td,tS=v[dl.indexOf(td)];
+ const kv=dl.map((d,i)=>[d,v[i]]).filter(([d,x])=>x.kc>0),kd=kv.filter(([d,x])=>d!=td||x.mp>=100),kk=(kd.length?kd:kv).map(([d,x])=>x.kc),kcA=kk.length?kk.reduce((a,b)=>a+b,0)/kk.length:null;
+ const slA=av(x=>x.sl||null,pv.concat(tS&&tS.sl&&pv!==v?[tS]:[]));
+ return{n,sc:av(x=>x.sc),sl:slA,kc:kcA,hb:av(x=>x.hb),fo:av(x=>x.fo),woD:v.filter(x=>x.wo==100).length,woP:v.filter((x,i)=>x.wo>=0&&(!isT(i)||x.wo==100)).length,full:v.filter(x=>x.sc>=70).length,j:v.filter(x=>x.j).length,jN:v.filter((x,i)=>!isT(i)||x.j).length,rw}}
 function statGrid(a,period){const p=PL(),f=(v,u="")=>v==null?"—":Math.round(v)+u;
  const c=[`<div class="st"><small>PUNTEGGIO MEDIO</small><b style="color:${a.sc==null?"var(--tx)":scC(a.sc)}">${f(a.sc)}</b><em>${a.full} giorni ≥ 70</em></div>`];
  if(p.focus)c.push(`<div class="st"><small>${esc(p.focus.n.toUpperCase())}</small><b>${f(a.fo,"%")}</b><em>dell’obiettivo giornaliero</em></div>`);
@@ -659,9 +660,9 @@ function statGrid(a,period){const p=PL(),f=(v,u="")=>v==null?"—":Math.round(v)
  c.push(`<div class="st"><small>SONNO MEDIO</small><b>${a.sl==null?"—":n1(a.sl)+" h"}</b><em>obiettivo 7,5 h</em></div>`);
  c.push(`<div class="st"><small>KCAL MEDIE</small><b>${a.kc==null?"—":fmtK(a.kc)}</b><em>nei giorni completi</em></div>`);
  c.push(`<div class="st"><small>ABITUDINI</small><b>${f(a.hb,"%")}</b><em>completate in media</em></div>`);
- c.push(`<div class="st"><small>ESAMI SERALI</small><b>${a.j}<span class="mu" style="font-size:15px">/${a.n}</span></b><em>giorni chiusi da stoico</em></div>`);
+ c.push(`<div class="st"><small>ESAMI SERALI</small><b>${a.j}<span class="mu" style="font-size:15px">/${a.jN}</span></b><em>giorni chiusi da stoico</em></div>`);
  if(p.reward)c.push(`<div class="st"><small>PREMI</small><b>${p.reward.ic} ${a.rw}</b><em>${esc(p.reward.n.toLowerCase())} riscattati</em></div>`);
- return `<div class="stats">${c.join("")}</div>`}
+ return `<div class="stats">${c.join("")}</div><p class="xs mu" style="margin:10px 4px 14px">Le medie si fermano a ieri: oggi entra nel conto a giornata chiusa (allenamento ed esame serale appena li completi, sonno appena lo registri).</p>`}
 function goalsBox(){const p=PL();if(!p.goals||!p.goals.some(x=>x.s!=null))return"";
  return `<section class="card"><div class="ch"><h3>🎯 Obiettivi${p.weeks?" a "+p.weeks+" settimane":""}</h3><button class="lk" onclick="msS()">＋ Misure</button></div>`+p.goals.filter(x=>x.s!=null).map(gl=>{const c=goalCur(gl),v=c?c.v:null,tg=gl.t[0]==gl.t[1]?n1(gl.t[0]):n1(gl.t[0])+"-"+n1(gl.t[1]);
   let pr=0,col="var(--ok)",st2="";if(v!=null){if(gl.dir==0){const ok=v>=gl.t[0]-.5&&v<=gl.t[1]+.5;pr=ok?1:.5;col=ok?"var(--ok)":"var(--am)";st2=ok?"in linea":"da tenere d’occhio"}else{const tgt=gl.dir<0?gl.t[1]:gl.t[0];pr=Math.max(0,Math.min(1,(v-gl.s)/(tgt-gl.s)));st2=pr>=1?"raggiunto ✓":Math.round(pr*100)+"%"}}

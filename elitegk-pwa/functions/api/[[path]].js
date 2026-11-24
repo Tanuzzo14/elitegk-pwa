@@ -26,7 +26,8 @@ async function push(env,uid,title,body,path,host){if(!env.VAPID_PRIVATE_KEY)retu
  return n}
 const SPK=/^[a-z0-9_]{2,30}$/;
 function PRF(b){b=b||{};const nt=Math.min(6,Math.max(1,parseInt(b.nt)||2)),team=[...new Set((Array.isArray(b.team)?b.team:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<7))].slice(-nt);
- return{sport:!!b.sport,sp:SPK.test(String(b.sp||""))?String(b.sp):"futsal",nt,team,match:Number.isInteger(b.match)&&b.match>=-1&&b.match<7&&!team.includes(b.match)?b.match:-1}}
+ const mt=[...new Set((Array.isArray(b.mt)?b.mt:Number.isInteger(b.match)&&b.match>=0?[b.match]:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<7&&!team.includes(n)))].slice(0,4);
+ return{sport:!!b.sport,sp:SPK.test(String(b.sp||""))?String(b.sp):"futsal",nt,team,mt,match:mt.length?mt[0]:-1}}
 export async function onRequest({request:req,env}){
  const url=new URL(req.url),p=url.pathname.replace(/^\/api\//,""),m=req.method;
  if(m!="GET"&&req.headers.get("origin")&&new URL(req.headers.get("origin")).host!==url.host)return J({e:"origin"},403);
@@ -82,7 +83,7 @@ export async function onRequest({request:req,env}){
   await tables(env);
   if(p=="me"){const s=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first(),pr=await proOf(env,me.id);
    const pros=(await env.DB.prepare("SELECT l.pro,l.scope,l.status,p.name,p.roles,(SELECT COUNT(*) FROM notes n WHERE n.pro=l.pro AND n.client=l.client AND n.dir='p2c' AND n.seen=0) un FROM links l JOIN pros p ON p.uid=l.pro WHERE l.client=? AND l.pro<>l.client").bind(me.id).all()).results||[];
-   return J({user:{username:me.username,admin:isAdm,pro:pr?{name:pr.name,roles:pr.roles}:null,canPro:isAdm||!!env.PRO_CODE},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{},pros,push:!!env.VAPID_PRIVATE_KEY})}
+   return J({user:{username:me.username,admin:isAdm,pro:pr?{name:pr.name,roles:pr.roles}:null,canPro:isAdm},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{},pros,push:!!env.VAPID_PRIVATE_KEY})}
   // ---- notifiche push
   if(p=="push/key"){if(!env.VAPID_PRIVATE_KEY)return J({e:"off"},404);const k=JSON.parse(env.VAPID_PRIVATE_KEY),u8=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0)),raw=new Uint8Array([4,...u8(k.x),...u8(k.y)]);return J({key:b64(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")})}
   if(p=="push/sub"&&m=="POST"){const e=String(body.endpoint||""),k=body.keys||{};if(!/^https:\/\//.test(e)||!k.p256dh||!k.auth)return J({e:"bad"},400);await env.DB.prepare("INSERT INTO push_subs(endpoint,uid,p256dh,auth,created) VALUES(?,?,?,?,?) ON CONFLICT(endpoint) DO UPDATE SET uid=excluded.uid,p256dh=excluded.p256dh,auth=excluded.auth").bind(e,me.id,String(k.p256dh),String(k.auth),Date.now()).run();return J({ok:1})}
@@ -110,6 +111,10 @@ export async function onRequest({request:req,env}){
     return J({pro:{name:pr.name,roles:pr.roles},clients:cl.map(c=>({id:c.id,username:c.username,scope:c.scope,status:c.status,since:c.created,updated:c.updated,un:c.un,uk:c.uk,profile:JSON.parse(c.profile||"{}"),state:forPro(c.data,c.scope)})),invites:inv})}
    if(p=="pro/invite"&&m=="POST"){const c=code();await env.DB.prepare("INSERT INTO invites(code,pro,scope,label,created) VALUES(?,?,?,?,?)").bind(c,me.id,SC(body.scope),String(body.label||"").trim().slice(0,40),Date.now()).run();return J({ok:1,code:c})}
    if(p=="pro/invite/del"&&m=="POST"){await env.DB.prepare("DELETE FROM invites WHERE code=? AND pro=? AND used_by IS NULL").bind(String(body.code||""),me.id).run();return J({ok:1})}
+   if(p=="pro/grant"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore"},403);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
+    const roles=(Array.isArray(body.roles)?body.roles:[]).filter(r=>r=="pt"||r=="nu").join(",")||"pt",name=String(body.name||cu.username).trim().slice(0,60)||cu.username;
+    await env.DB.prepare("INSERT INTO pros(uid,name,roles,created) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET name=excluded.name,roles=excluded.roles").bind(cu.id,name,roles,Date.now()).run();
+    await push(env,cu.id,"🧑‍🏫 Pannello Pro attivo","Apri l’app: in alto trovi il Pannello Pro per seguire i tuoi clienti.","/?pro=1",url.host);return J({ok:1})}
    if(p=="pro/self"&&m=="POST"){await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,'wm','on',?) ON CONFLICT(pro,client) DO UPDATE SET status='on'").bind(me.id,me.id,Date.now()).run();return J({ok:1})}
    if(p=="pro/add"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore può collegare utenti senza invito"},403);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
     await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,?,'on',?) ON CONFLICT(pro,client) DO UPDATE SET scope=excluded.scope,status='on'").bind(me.id,cu.id,SC(body.scope),Date.now()).run();

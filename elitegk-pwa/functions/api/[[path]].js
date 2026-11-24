@@ -24,6 +24,9 @@ async function push(env,uid,title,body,path,host){if(!env.VAPID_PRIVATE_KEY)retu
  for(const x of subs){try{const r=await buildPushHTTPRequest({privateJWK:jwk,subscription:{endpoint:x.endpoint,keys:{p256dh:x.p256dh,auth:x.auth}},message:{payload:{web_push:8030,notification:{title,body,navigate:"https://"+host+(path||"/"),lang:"it",dir:"ltr"}},adminContact:env.PUSH_CONTACT||"https://"+host,options:{ttl:86400,urgency:"normal"}}});
   const res=await fetch(r.endpoint,{method:"POST",headers:r.headers,body:r.body});if(res.status==404||res.status==410)await env.DB.prepare("DELETE FROM push_subs WHERE endpoint=?").bind(x.endpoint).run();else if(res.ok)n++}catch(e){}}
  return n}
+const SPK=/^[a-z0-9_]{2,30}$/;
+function PRF(b){b=b||{};const nt=Math.min(6,Math.max(1,parseInt(b.nt)||2)),team=[...new Set((Array.isArray(b.team)?b.team:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<7))].slice(-nt);
+ return{sport:!!b.sport,sp:SPK.test(String(b.sp||""))?String(b.sp):"futsal",nt,team,match:Number.isInteger(b.match)&&b.match>=-1&&b.match<7&&!team.includes(b.match)?b.match:-1}}
 export async function onRequest({request:req,env}){
  const url=new URL(req.url),p=url.pathname.replace(/^\/api\//,""),m=req.method;
  if(m!="GET"&&req.headers.get("origin")&&new URL(req.headers.get("origin")).host!==url.host)return J({e:"origin"},403);
@@ -58,7 +61,7 @@ export async function onRequest({request:req,env}){
    if(env.REGISTRATION=="closed"&&!invOk)return J({e:"Registrazioni chiuse"},403);
    if(!/^[a-z0-9_.-]{3,32}$/.test(u)||pw.length<8)return J({e:"Utente 3-32 caratteri (a-z, 0-9, . _ -), password minimo 8"},400);
    if(adm||await env.DB.prepare("SELECT 1 FROM users WHERE username=?").bind(u).first())return J({e:"Utente non disponibile"},409);
-   const id=await mk(env,u,pw,{sport:!!body.sport,team:[1,4],match:0});
+   const id=await mk(env,u,pw,PRF({sport:!!body.sport,sp:"futsal",nt:2,team:[1,4],match:0}));
    return J({ok:1},200,{"set-cookie":await sess(env,id)});
   }
   if(p=="waitlist"&&m=="POST"){
@@ -78,7 +81,7 @@ export async function onRequest({request:req,env}){
    return J({rows})}
   await tables(env);
   if(p=="me"){const s=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first(),pr=await proOf(env,me.id);
-   const pros=(await env.DB.prepare("SELECT l.pro,l.scope,l.status,p.name,p.roles,(SELECT COUNT(*) FROM notes n WHERE n.pro=l.pro AND n.client=l.client AND n.dir='p2c' AND n.seen=0) un FROM links l JOIN pros p ON p.uid=l.pro WHERE l.client=?").bind(me.id).all()).results||[];
+   const pros=(await env.DB.prepare("SELECT l.pro,l.scope,l.status,p.name,p.roles,(SELECT COUNT(*) FROM notes n WHERE n.pro=l.pro AND n.client=l.client AND n.dir='p2c' AND n.seen=0) un FROM links l JOIN pros p ON p.uid=l.pro WHERE l.client=? AND l.pro<>l.client").bind(me.id).all()).results||[];
    return J({user:{username:me.username,admin:isAdm,pro:pr?{name:pr.name,roles:pr.roles}:null,canPro:isAdm||!!env.PRO_CODE},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{},pros,push:!!env.VAPID_PRIVATE_KEY})}
   // ---- notifiche push
   if(p=="push/key"){if(!env.VAPID_PRIVATE_KEY)return J({e:"off"},404);const k=JSON.parse(env.VAPID_PRIVATE_KEY),u8=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0)),raw=new Uint8Array([4,...u8(k.x),...u8(k.y)]);return J({key:b64(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")})}
@@ -107,6 +110,10 @@ export async function onRequest({request:req,env}){
     return J({pro:{name:pr.name,roles:pr.roles},clients:cl.map(c=>({id:c.id,username:c.username,scope:c.scope,status:c.status,since:c.created,updated:c.updated,un:c.un,uk:c.uk,profile:JSON.parse(c.profile||"{}"),state:forPro(c.data,c.scope)})),invites:inv})}
    if(p=="pro/invite"&&m=="POST"){const c=code();await env.DB.prepare("INSERT INTO invites(code,pro,scope,label,created) VALUES(?,?,?,?,?)").bind(c,me.id,SC(body.scope),String(body.label||"").trim().slice(0,40),Date.now()).run();return J({ok:1,code:c})}
    if(p=="pro/invite/del"&&m=="POST"){await env.DB.prepare("DELETE FROM invites WHERE code=? AND pro=? AND used_by IS NULL").bind(String(body.code||""),me.id).run();return J({ok:1})}
+   if(p=="pro/self"&&m=="POST"){await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,'wm','on',?) ON CONFLICT(pro,client) DO UPDATE SET status='on'").bind(me.id,me.id,Date.now()).run();return J({ok:1})}
+   if(p=="pro/add"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore può collegare utenti senza invito"},403);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
+    await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,?,'on',?) ON CONFLICT(pro,client) DO UPDATE SET scope=excluded.scope,status='on'").bind(me.id,cu.id,SC(body.scope),Date.now()).run();
+    if(cu.id!=me.id)await push(env,cu.id,"🤝 "+pr.name,"Ora ti segue su Elite GK: lo trovi in Impostazioni › Il tuo team.","/",url.host);return J({ok:1})}
    const cid=Number(body.client||url.searchParams.get("c")),lk=await env.DB.prepare("SELECT * FROM links WHERE pro=? AND client=?").bind(me.id,cid).first();if(!lk)return J({e:"nf"},404);
    if(p=="pro/notes"&&m=="GET"){const r=(await env.DB.prepare("SELECT * FROM notes WHERE pro=? AND client=? ORDER BY created DESC LIMIT 60").bind(me.id,cid).all()).results||[];await env.DB.prepare("UPDATE notes SET seen=1 WHERE pro=? AND client=? AND dir='c2p'").bind(me.id,cid).run();return J({notes:r})}
    if(p=="pro/msg"&&m=="POST"){const text=String(body.text||"").trim().slice(0,500);if(!text)return J({e:"Scrivi un messaggio"},400);await env.DB.prepare("INSERT INTO notes(pro,client,dir,kind,text,created) VALUES(?,?,'p2c','msg',?,?)").bind(me.id,cid,text,Date.now()).run();
@@ -119,14 +126,15 @@ export async function onRequest({request:req,env}){
     o.plan=out;o.planRev=(o.planRev||0)+1;o.planBy=pr.name;o.planAt=Date.now();if(Array.isArray(body.habits)){o.hb=body.habits.slice(0,20).map(h=>({id:String(h.id||"h"+Math.random().toString(36).slice(2,7)).slice(0,12),n:String(h.n||"Abitudine").slice(0,44),i:String(h.i||"✳️").slice(0,4)}));o.planHb=o.planRev}
     if(!o.v){o.v=3}
     await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(cid,JSON.stringify(o),Date.now()).run();
-    await push(env,cid,"📋 "+pr.name,"Ho aggiornato il tuo piano: aprilo per vedere le novità.","/",url.host);return J({ok:1,planRev:o.planRev})}
+    if(cid!=me.id)await push(env,cid,"📋 "+pr.name,"Ho aggiornato il tuo piano: aprilo per vedere le novità.","/",url.host);return J({ok:1,planRev:o.planRev})}
+   if(p=="pro/profile"&&m=="POST"){if(lk.status!="on"||lk.scope=="m")return J({e:"Non segui l’allenamento di questo cliente"},403);await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(PRF(body)),cid).run();return J({ok:1})}
    if(p=="pro/link"&&m=="POST"){await env.DB.prepare("UPDATE links SET status=?,scope=? WHERE pro=? AND client=?").bind(body.status=="off"?"off":"on",body.scope?SC(body.scope):lk.scope,me.id,cid).run();return J({ok:1})}
    return J({e:"nf"},404)}
   if(p=="state"&&m=="PUT"){let back=null;const ex=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first();
    // se il professionista ha aggiornato il piano dopo l'ultima lettura del cliente, il piano del server vince
    if(ex){let o={};try{o=JSON.parse(ex.data)}catch(e){}if((o.planRev||0)>(body.planRev||0)){body.plan=o.plan;body.planRev=o.planRev;body.planBy=o.planBy;body.planAt=o.planAt;if(o.planHb){body.hb=o.hb;body.planHb=o.planHb}back={plan:o.plan,planRev:o.planRev,planBy:o.planBy,planAt:o.planAt,hb:o.planHb?o.hb:null}}}
    const d=JSON.stringify(body);if(d.length>200000)return J({e:"big"},413);await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(me.id,d,Date.now()).run();return J({ok:1,...(back||{})})}
-  if(p=="profile"&&m=="PUT"){const pr={sport:!!body.sport,team:(Array.isArray(body.team)?body.team:[]).map(Number).filter(n=>n>=0&&n<7).slice(0,2),match:Number.isInteger(body.match)&&body.match>=-1&&body.match<7?body.match:-1};await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(pr),me.id).run();return J({ok:1})}
+  if(p=="profile"&&m=="PUT"){const pr=PRF(body);await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(pr),me.id).run();return J({ok:1})}
   if(p=="logout"&&m=="POST"){const c=/(?:^|; )sid=([^;]+)/.exec(req.headers.get("cookie")||"");if(c)await env.DB.prepare("DELETE FROM sessions WHERE th=?").bind(await sha(c[1])).run();return J({ok:1},200,{"set-cookie":"sid=; Path=/; Max-Age=0"})}
   return J({e:"nf"},404);
  }catch(e){return J({e:"server"},500)}

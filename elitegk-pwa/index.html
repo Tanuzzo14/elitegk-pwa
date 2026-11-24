@@ -112,7 +112,20 @@ main{max-width:560px;margin:0 auto;padding:0 16px}
 .xr{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--bd);font-size:14px}.xr button{border:0;background:none;color:var(--mu);font-size:18px;padding:0 4px}
 /* shop */
 .it{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:11px 0;border-top:1px solid var(--bd);text-align:left;min-height:48px}.card .it:first-of-type{border-top:0}
-.it .f1{font-weight:600}.it em{font-style:normal;color:var(--mu);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.zc h3{font-size:17px;margin:2px 0 0}.gb{height:10px;border-radius:10px;background:var(--trk);overflow:hidden;margin-top:12px}.gb i{display:block;height:100%;background:linear-gradient(90deg,#E3A008,#E8590C);border-radius:10px;transition:width .5s}
+.zn{flex:0 0 auto;animation:zb 3.2s ease-in-out infinite}@keyframes zb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+#cel{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(7,15,28,.55);overflow:hidden}#cel.on{display:flex}
+#cel .cb{background:var(--card);color:var(--tx);border-radius:24px;padding:24px 22px;max-width:320px;width:86%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pop .35s ease-out}#cel h2{margin:8px 0 4px}#cel p{margin:0 0 16px;color:var(--mu);font-weight:700}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}.cf{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:cfall 1.9s ease-in forwards}@keyframes cfall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.zn,.cf,#cel .cb{animation:none}}
+.pc{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 0;border-top:1px solid var(--bd);text-align:left;color:var(--tx);font:inherit;min-height:56px}.ch+.pc{border-top:0}.pc.off{opacity:.55}.pc .f1{min-width:0}.pc b{font-size:15px}.pc small{display:block;color:var(--mu);font-size:13px;margin-top:2px}.pc .go{color:var(--ac);font-weight:800;font-size:13px;white-space:nowrap}
+.avt,.av{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--c2);border:1px solid var(--bd);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--tx)}
+.bdg{display:inline-block;background:var(--ac);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 7px;vertical-align:middle}.ad{display:block;height:6px;border-radius:6px;background:var(--trk);overflow:hidden;margin-top:6px;max-width:220px}.ad i{display:block;height:100%}.scn{font-weight:800;font-size:18px;min-width:28px;text-align:right}
+.d7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:90px;align-items:end}.d7 div{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:4px}.d7 i{display:block;width:100%;border-radius:6px 6px 3px 3px}.d7 small{font-size:11px;color:var(--mu);font-weight:700}
+.th{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto;padding:2px}.ms{background:var(--c2);border:1px solid var(--bd);border-radius:14px 14px 14px 4px;padding:10px 12px;font-size:14px;max-width:88%;align-self:flex-start}.ms.me{align-self:flex-end;border-radius:14px 14px 4px 14px;background:var(--card)}.ms small{display:block;color:var(--mu);font-size:11px;margin-top:4px}
+.ivb{background:var(--c2);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:14px 0 6px;font-size:14px}.pbtn{border:0;border-radius:12px;background:var(--nv);color:#fff;font-weight:800;font-size:12px;letter-spacing:.08em;padding:0 12px;height:44px}
+:root[data-theme="dark"] .pbtn{background:#EDF1F7;color:#0B1F3A}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pbtn{background:#EDF1F7;color:#0B1F3A}}
+.it .f1{font-weight:600}.it .pk{display:block;font-weight:600;font-size:13px;color:var(--mu);margin-top:2px}.it em{font-style:normal;color:var(--mu);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
 .it.on .f1,.it.on em{text-decoration:line-through;opacity:.45}
 .cat{margin:18px 0 6px;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);font-weight:800}
 .seg{display:flex;background:var(--c2);border:1px solid var(--bd);border-radius:14px;padding:4px;margin:12px 0;gap:4px}
@@ -200,6 +213,7 @@ main>:nth-child(2){animation-delay:.03s}main>:nth-child(3){animation-delay:.06s}
 <div class="fo" id="fo" role="dialog" aria-modal="true"></div><div class="fo" id="au"></div>
 <div class="sheet" id="sh"><div id="shc" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="cel" role="dialog" aria-label="Obiettivo raggiunto" onclick="if(event.target==this)this.classList.remove('on')"></div>
 <script>
 "use strict";
 /* ---------- utility ---------- */
@@ -352,7 +366,39 @@ function slots(d,ds){const M=PL().meals;if(!M)return[];const wd=d.getDay(),day=(
  return r.sort((a,b)=>a.h[0]-b.h[0])}
 function FD(wd){const S=PL().shop;if(!S)return[];let r=[...(S.fix||[])];if(isPre(wd))r=r.concat(S.pre||[]);if(isPost(wd))r=r.concat(S.post||[]);return r.concat((S.day&&S.day[wd])||[])}
 function agg(ds){const m={};ds.forEach(d=>FD(d).forEach(([n,g,c,u])=>{(m[n]=m[n]||[n,0,c,u||"g"])[1]+=g}));return Object.values(m)}
+/* confezioni tipiche da supermercato (stima): [regex, peso/volume, singolare, plurale]. Nel piano si può forzare con un 5° elemento {pk,pn:[sing,plur]} */
+const PK=[[/latte al cioccolato|latte cioccolato/i,500,"bottiglia","bottiglie"],[/^latte/i,1000,"brick","brick"],[/yogurt|skyr/i,500,"vasetto","vasetti"],[/avena/i,500,"confezione","confezioni"],
+ [/frutti rossi|mirtill|lamponi/i,300,"busta","buste"],[/noci|mandorl|nocciol|anacardi|frutta secca|semi/i,200,"busta","buste"],[/riso/i,1000,"pacco","pacchi"],[/pasta|farro|orzo|cous/i,500,"pacco","pacchi"],
+ [/legumi|ceci|fagioli|lenticchie|piselli/i,240,"barattolo","barattoli"],[/tonno/i,80,"scatoletta","scatolette"],[/bresaola|fesa|prosciutto|affettato/i,100,"vaschetta","vaschette"],
+ [/carne|pollo|tacchino|manzo|vitello|maiale|macinato/i,400,"vaschetta","vaschette"],[/pesce|salmone|merluzzo|orata|branzino|platessa/i,300,"confezione","confezioni"],
+ [/mozzarella/i,125,"pezzo","pezzi"],[/ricotta|fiocchi di latte|cottage/i,250,"vaschetta","vaschette"],[/parmigiano|grana|formaggio/i,200,"pezzo","pezzi"],
+ [/cioccolat/i,100,"tavoletta","tavolette"],[/gallette|crackers|fette biscottate/i,250,"confezione","confezioni"],[/uova/i,6,"confezione da 6","confezioni da 6","pz"]];
+const PKNO=/olio|sale|spezie|aceto|miele|verdura|frutta di stagione|frutta fresca|insalata|patate|pane|zucchine|pomodor|banan|mele|arance|limon/i;
+function pkOf(x){if(x[4]&&x[4].pk)return[null,x[4].pk,...(x[4].pn||["confezione","confezioni"])];if(PKNO.test(x[0]))return null;const u=x[3]||"g",k=u=="g"||u=="ml"?"m":u=="pz"?"pz":null;if(!k)return null;return PK.find(r=>r[0].test(x[0])&&(r[4]=="pz")==(k=="pz"))||null}
+function pkTxt(x){const k=pkOf(x);if(!k||!(x[1]>0))return"";const n=Math.ceil(x[1]/k[1]-.05);const u=(x[3]||"g")=="pz"?"":(x[3]=="ml"?" ml":" g");return `≈ ${n} ${n==1?k[2]:k[3]}${u?` da ${k[1]>=1000&&u==" ml"?n1(k[1]/1000)+" L":k[1]+u}`:""}`}
 const fqty=(g,u)=>u=="g"?(g>=1000?n1(g/1000)+" kg":g+" g"):u=="ml"?(g>=1000?n1(g/1000)+" L":g+" ml"):g+" "+u;
+
+/* ---------- mascotte: Zeno, il gufo stoico ---------- */
+function zeno(m="ok",sz=72){const E="#0E1B2C";let eyes,extra="";
+ if(m=="happy"||m=="proud")eyes=`<path d="M28 45q9-10 18 0M54 45q9-10 18 0" stroke="${E}" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="27" cy="55" r="4" fill="#F49A8A" opacity=".7"/><circle cx="73" cy="55" r="4" fill="#F49A8A" opacity=".7"/>`;
+ else if(m=="sleepy")eyes=`<path d="M28 46h17M55 46h17" stroke="${E}" stroke-width="4.5" stroke-linecap="round"/>`;
+ else{const dy=m=="worried"?4:0;eyes=`<circle cx="37" cy="44" r="12" fill="#fff"/><circle cx="63" cy="44" r="12" fill="#fff"/><circle cx="${m=="worried"?36:38}" cy="${44+dy}" r="5.5" fill="${E}"/><circle cx="${m=="worried"?62:64}" cy="${44+dy}" r="5.5" fill="${E}"/><circle cx="${m=="worried"?37.5:39.5}" cy="${42+dy}" r="1.8" fill="#fff"/><circle cx="${m=="worried"?63.5:65.5}" cy="${42+dy}" r="1.8" fill="#fff"/>`;
+  if(m=="worried")extra=`<path d="M26 30l20 5M74 30l-20 5" stroke="${E}" stroke-width="3.5" stroke-linecap="round"/><path d="M82 30q4 7 0 10q-4-3 0-10z" fill="#7CC4F2"/>`}
+ if(m=="proud")extra=`<path d="M30 18q-6-8 0-14q4 7 0 14zM40 13q-3-9 4-13q2 8-4 13zM70 18q6-8 0-14q-4 7 0 14zM60 13q3-9-4-13q-2 8 4 13z" fill="#6B955F"/><path d="M14 22l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#E3A008"/><path d="M88 60l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#E3A008"/>`;
+ if(m=="sleepy")extra=`<text x="74" y="22" font-size="14" font-weight="800" fill="#6C63D9">z</text><text x="84" y="12" font-size="10" font-weight="800" fill="#6C63D9">z</text>`;
+ return `<svg class="zn ${m}" width="${sz}" height="${sz}" viewBox="0 0 100 100" role="img" aria-label="Zeno, la mascotte"><path d="M22 30L28 8 42 24zM78 30L72 8 58 24z" fill="#1E3A5F"/><ellipse cx="50" cy="58" rx="34" ry="36" fill="#1E3A5F"/><ellipse cx="18" cy="64" rx="8" ry="17" fill="#16304F" transform="rotate(12 18 64)"/><ellipse cx="82" cy="64" rx="8" ry="17" fill="#16304F" transform="rotate(-12 82 64)"/><ellipse cx="50" cy="69" rx="22" ry="23" fill="#F4E9D8"/><path d="M41 66q4 3 8 0M51 72q4 3 8 0M41 78q4 3 8 0" stroke="#D9C7A8" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M45 52h10l-5 9z" fill="#E8590C"/><path d="M38 93h8M54 93h8" stroke="#E8590C" stroke-width="5" stroke-linecap="round"/>${eyes}${extra}</svg>`}
+function znMsg(){const ds=iso(today()),sc=dstat(ds).sc||0,S=streaks(),hr=new Date().getHours(),miss=Math.max(0,GOAL-sc),ser=S.cur?`Serie: ${S.cur} ${S.cur==1?"giorno":"giorni"}.`:"";
+ if(sc>=GOAL)return{m:"proud",t:"Obiettivo del giorno centrato!",s:`${ser} Domani si riparte da qui.`.trim()};
+ if(hr>=23||hr<5)return{m:"sleepy",t:"È ora di riposare",s:"Dormire bene vale punti anche domani."};
+ if(hr>=20&&S.cur>0)return{m:"worried",t:`La serie di ${S.cur} ${S.cur==1?"giorno":"giorni"} è a rischio`,s:`Ti mancano ${miss} punti: chiudi le abitudini e l’esame serale.${S.fzOk?" Se non ce la fai, questa settimana hai un salva-serie.":""}`};
+ if(sc>=40)return{m:"happy",t:`Ci sei quasi: mancano ${miss} punti`,s:ser||"Ogni cosa fatta conta."};
+ if(hr<11)return{m:"ok",t:"Buongiorno! Obiettivo di oggi: 70 punti",s:S.cur?`${ser} Non spezzarla proprio oggi.`:"Inizia dalla prima cosa della schermata Adesso."};
+ return{m:"ok",t:`Oggi sei a ${sc} punti su ${GOAL}`,s:ser||"Un passo alla volta: la prossima cosa è qui sopra."}}
+function znCard(){const z=znMsg(),sc=dstat(iso(today())).sc||0,S=streaks(),L2=lvXP(S.xp);
+ return `<section class="card zc"><div class="row" style="gap:12px;align-items:center">${zeno(z.m,68)}<div class="f1"><div class="ey">Zeno · livello ${L2.n} · ${S.xp.toLocaleString("it-IT")} XP</div><h3>${esc(z.t)}</h3><p class="sm mu" style="margin:2px 0 0">${esc(z.s)}</p></div></div><div class="gb"><i style="width:${Math.min(100,100*sc/GOAL)}%"></i></div><div class="xs mu" style="display:flex;justify-content:space-between;margin-top:6px"><span>Obiettivo del giorno: ${Math.min(sc,GOAL)}/${GOAL}</span><span>${S.fzOk?"🧊 Salva-serie disponibile":"🧊 Salva-serie usato questa settimana"}</span></div></section>`}
+let pSc=null;
+function cheer(){const S=streaks(),c=$("cel");c.innerHTML=`<div class="cb">${zeno("proud",120)}<h2>Obiettivo del giorno!</h2><p>🔥 Serie a ${S.cur} ${S.cur==1?"giorno":"giorni"} · ${S.xp.toLocaleString("it-IT")} XP</p><button class="btn" onclick="$('cel').classList.remove('on')">Continua</button></div>`+Array.from({length:28},(_,i)=>`<i class="cf" style="left:${(i*37)%100}%;animation-delay:${(i%7)*.08}s;background:${["#E8590C","#E3A008","#1F9D55","#2F6FDB","#6C63D9"][i%5]}"></i>`).join("");c.classList.add("on");try{navigator.vibrate&&navigator.vibrate([30,40,30])}catch(e){}}
+function ckGoal(){if(!hasPlan())return;const sc=dstat(iso(today())).sc||0;if(pSc!=null&&pSc<GOAL&&sc>=GOAL)setTimeout(cheer,250);pSc=sc}
 
 /* ---------- stoicismo ---------- */
 const QS=[
@@ -447,7 +493,7 @@ let me=null;try{prof=JSON.parse(localStorage.getItem("egkp"))}catch(e){}
 const G=ds=>st.log[ds]||{};
 const L=ds=>st.log[ds]||(st.log[ds]={});
 let pt;
-function sv(){prune();try{localStorage.setItem("egk",JSON.stringify(st))}catch(e){}clearTimeout(pt);if(me)pt=setTimeout(()=>api("state","PUT",st),700)}
+function sv(){prune();ckGoal();try{localStorage.setItem("egk",JSON.stringify(st))}catch(e){}clearTimeout(pt);if(me)pt=setTimeout(()=>api("state","PUT",st),700)}
 function prune(){const t=today();const run=(keep,jk)=>{const a=iso(addD(t,-keep)),b=iso(addD(t,-jk));
   for(const d in st.log){const o=st.log[d];if(d<a&&!o.z){const z=zOf(d),j=o.j;st.log[d]=j?{z,j}:{z}}if(st.log[d].j&&d<b)delete st.log[d].j}};
  run(45,120);
@@ -477,9 +523,16 @@ function dstat(ds){const o=st.log[ds];
  return{sc:W?Math.round(100*S/W):0,kc,kt,sl:slh,wo,hb,mp:mp<0?-1:Math.round(mp*100),j:g.jd?1:0,fo}}
 const zOf=ds=>{const s=dstat(ds);return[s.sc,s.kc,s.kt,s.sl,s.wo,s.hb,s.j,s.mp,s.fo]};
 const inR=ds=>ds>=st.start&&ds<=iso(today());
-function streaks(){let cur=0,best=0,run=0,full=0;const t=today();let d=pd(st.start);
- while(d<=t){const ds=iso(d),s=dstat(ds);if(s.sc>=70){run++;full++;best=Math.max(best,run)}else if(ds!=iso(t))run=0;d=addD(d,1)}
- cur=run;return{cur,best,full}}
+/* serie con un «salva-serie» per settimana, punti esperienza (XP = punti del giorno) e livelli */
+const GOAL=70;
+function streaks(){let run=0,best=0,full=0,xp=0,xpW=0;const t=today(),ts=iso(t),wk=iso(mon(t)),fz={};let d=pd(st.start),last=null;
+ while(d<=t){const ds=iso(d),sc=dstat(ds).sc||0;xp+=sc;if(iso(mon(d))==wk)xpW+=sc;
+  if(sc>=GOAL){run++;full++;best=Math.max(best,run)}
+  else if(ds!=ts){const k=iso(mon(d));if(run>0&&!fz[k]){fz[k]=ds;last=ds}else run=0}
+  d=addD(d,1)}
+ return{cur:run,best,full,xp,xpW,fzOk:!fz[wk],fzLast:last,fzWeek:fz[wk]||null}}
+const lvT=n=>50*n*(n-1);
+function lvXP(xp){let n=1;while(lvT(n+1)<=xp)n++;return{n,a:lvT(n),b:lvT(n+1)}}
 const LV=[[0,"Novizio","🌱"],[7,"Discepolo","📜"],[30,"Prokoptōn","🏛️"],[90,"Praticante","⚔️"],[180,"Costante","🛡️"],[365,"Saggio in cammino","🦉"]];
 function level(full){let i=0;LV.forEach((l,k)=>{if(full>=l[0])i=k});return{i,l:LV[i],nx:LV[i+1]}}
 const scC=s=>s>=70?"var(--ok)":s>=40?"var(--am)":"var(--ac)";
@@ -570,9 +623,11 @@ function vToday(){if(!hasPlan())return vWelcome();
  if(p.meals)m4.push(`<div class="met">${ring(Math.min(1,kp),34,4,kp>1.1?"var(--am)":"var(--ac)","")}<div><b>${fmtK(s.kc)}</b><small>di ${fmtK(s.kt)} kcal</small></div></div>`);
  m4.push(`<div class="met">${ring(s.hb>=0?s.hb/100:0,34,4,"var(--ok)","")}<div><b>${hd}/${st.hb.length}</b><small>Abitudini</small></div></div>`);
  m4.push(`<div class="met" onclick="sleepS()" style="cursor:pointer">${ring(s.sl?Math.min(1,s.sl/7.5):0,34,4,"#6C63D9","")}<div><b>${s.sl?n1(s.sl)+" h":"—"}</b><small>Sonno</small></div></div>`);
- return `<header class="hd"><div><div class="ey">${GN[wd]} ${t.getDate()} ${MN[t.getMonth()]}</div><h1>${sal}${nm?", "+esc(nm):""}</h1></div><button class="ib" onclick="setS()" aria-label="Impostazioni">${IC.gear}</button></header>
-<div class="row" style="gap:8px;flex-wrap:wrap"><button class="pill" onclick="go('j')">🔥 ${S.cur} ${S.cur==1?"giorno":"giorni"} di serie</button><button class="pill gd" onclick="go('j')">${lv.l[2]} ${lv.l[1]}</button>${pw?`<span class="pill">Sett. ${pw.n}/${pw.of}${pw.c==4?" · scarico":""}</span>`:""}${Ss.k!="rest"||!p.focus?kb(Ss.k):""}</div>
+ return `<header class="hd"><div><div class="ey">${GN[wd]} ${t.getDate()} ${MN[t.getMonth()]}</div><h1>${sal}${nm?", "+esc(nm):""}</h1></div><div class="row" style="gap:8px">${me&&me.pro?`<button class="pbtn" onclick="go('x')" aria-label="Pannello Pro">PRO</button>`:""}<button class="ib" onclick="setS()" aria-label="Impostazioni">${IC.gear}</button></div></header>
+<div class="row" style="gap:8px;flex-wrap:wrap"><button class="pill" onclick="go('j')">🔥 ${S.cur} ${S.cur==1?"giorno":"giorni"} di serie</button><button class="pill" onclick="go('j')">⭐ Liv. ${lvXP(S.xp).n}</button><button class="pill gd" onclick="go('j')">${lv.l[2]} ${lv.l[1]}</button>${pw?`<span class="pill">Sett. ${pw.n}/${pw.of}${pw.c==4?" · scarico":""}</span>`:""}${Ss.k!="rest"||!p.focus?kb(Ss.k):""}</div>
 <section class="now ${h.tone||""}" aria-live="polite"><div class="ey">Adesso · ${hm(nowH())}</div><div class="nw"><span class="ne" aria-hidden="true">${h.ic}</span><div class="f1"><h2>${esc(h.t)}</h2>${h.s?`<p>${esc(h.s)}</p>`:""}${h.k?`<span class="kc">≈ ${h.k} kcal</span>`:""}</div></div>${h.b?`<button class="btn" onclick="${h.a}">${h.b}</button>`:""}</section>
+${znCard()}
+${teamCard()}
 <section class="qt"><div class="ey" style="color:var(--gd)">Il pensiero di oggi</div><blockquote>${Q[0]}</blockquote><cite>${Q[1]} · ${Q[2]}</cite></section>
 ${N.also.length?`<div class="also">`+N.also.map(x=>`<button class="al" onclick="${x.a||""}"><span class="ne" aria-hidden="true">${x.ic}</span><span class="f1"><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:""}</span>${x.b?`<span class="go">${x.b} ›</span>`:""}</button>`).join("")+`</div>`:""}
 ${semBox(ds)}
@@ -638,7 +693,7 @@ function vShop(){const p=PL();if(!p.shop)return `<header class="hd"><div><div cl
 <div class="seg" role="tablist"><button class="${sm=="w"?"on":""}" onclick="sm='w';draw(1)">Tutta la settimana</button><button class="${sm=="d"?"on":""}" onclick="sm='d';draw(1)">Solo ${GN[sel].toLowerCase()}</button></div>`;
  if(sm=="d")h+=strip();
  const cats=[...new Set(it.map(x=>x[2]))];
- h+=cats.map(cat=>{const r=it.filter(x=>x[2]==cat);return `<div class="cat">${esc(cat)}</div><section class="card" style="padding:4px 16px">`+r.map(x=>{const on=sp.i[x[0]];return `<button class="it ${on?"on":""}" data-n="${esc(x[0])}" onclick="tsp(this.dataset.n)"><span class="ck ${on?"on":""}">${on?"✓":""}</span><span class="f1">${esc(x[0])}</span><em>${fqty(x[1],x[3])}</em></button>`}).join("")+`</section>`}).join("");
+ h+=cats.map(cat=>{const r=it.filter(x=>x[2]==cat);return `<div class="cat">${esc(cat)}</div><section class="card" style="padding:4px 16px">`+r.map(x=>{const on=sp.i[x[0]];return `<button class="it ${on?"on":""}" data-n="${esc(x[0])}" onclick="tsp(this.dataset.n)"><span class="ck ${on?"on":""}">${on?"✓":""}</span><span class="f1">${esc(x[0])}${sm=="w"&&pkTxt(x)?`<small class="pk">${pkTxt(x)}</small>`:""}</span><em>${fqty(x[1],x[3])}</em></button>`}).join("")+`</section>`}).join("");
  return h+(p.shop.tips?`<section class="card"><h3>💡 Per risparmiare</h3><p class="sm mu" style="margin:8px 0 0">${esc(p.shop.tips)}</p></section>`:"")+`<button class="btn g" onclick="spReset()">Azzera le spunte di questo ciclo</button>`}
 
 /* ---------- vista: PERCORSO ---------- */
@@ -668,10 +723,11 @@ function goalsBox(){const p=PL();if(!p.goals||!p.goals.some(x=>x.s!=null))return
   let pr=0,col="var(--ok)",st2="";if(v!=null){if(gl.dir==0){const ok=v>=gl.t[0]-.5&&v<=gl.t[1]+.5;pr=ok?1:.5;col=ok?"var(--ok)":"var(--am)";st2=ok?"in linea":"da tenere d’occhio"}else{const tgt=gl.dir<0?gl.t[1]:gl.t[0];pr=Math.max(0,Math.min(1,(v-gl.s)/(tgt-gl.s)));st2=pr>=1?"raggiunto ✓":Math.round(pr*100)+"%"}}
   return `<div class="gl"><div class="row"><b>${esc(gl.n)}</b><span>${v!=null?n1(v):"—"} ${gl.u}</span></div><div class="xs mu" style="margin:2px 0 6px">da ${n1(gl.s)} → obiettivo ${tg} ${gl.u}${st2?" · "+st2:""}${gl.id=="peso"?" · media 7 giorni":""}</div><div class="bar" style="height:7px"><i style="width:${pr*100}%;background:${col}"></i></div></div>`}).join("")+
  (p.tests?`<button class="btn g sm" onclick="tsS()">🧪 Test di controllo${lastTest()?" · ultimo "+pd(lastTest()).getDate()+" "+MN[pd(lastTest()).getMonth()].slice(0,3):""}</button>`:"")+`</section>`}
-function vPath(){const t=today(),S=streaks(),lv=level(S.full);
+function vPath(){const t=today(),S=streaks(),lv=level(S.full),XL=lvXP(S.xp);
  let h=`<header class="hd"><div><div class="ey">Il tuo percorso</div><h1>Progressi</h1></div></header>
-<section class="card"><div class="lvb"><div class="ic">${lv.l[2]}</div><div class="f1"><div class="ey" style="color:var(--gd)">Livello ${lv.i+1} di ${LV.length}</div><h3 style="font-size:19px">${lv.l[1]}</h3>${lv.nx?`<div class="bar" style="margin-top:8px;height:8px"><i style="width:${100*(S.full-lv.l[0])/(lv.nx[0]-lv.l[0])}%;background:var(--gd)"></i></div><div class="xs mu" style="margin-top:6px">${lv.nx[0]-S.full} giorni pieni (≥ 70) per diventare ${lv.nx[1]}</div>`:`<div class="xs mu">Livello massimo raggiunto. Continua così.</div>`}</div></div>
-<div class="stats" style="margin-top:14px;grid-template-columns:1fr 1fr 1fr"><div class="st"><small>SERIE</small><b>🔥 ${S.cur}</b></div><div class="st"><small>RECORD</small><b>${S.best}</b></div><div class="st"><small>GIORNI PIENI</small><b>${S.full}</b></div></div></section>
+<section class="card"><div class="lvb"><div class="ic">${lv.l[2]}</div><div class="f1"><div class="ey" style="color:var(--gd)">Grado stoico ${lv.i+1} di ${LV.length}</div><h3 style="font-size:19px">${lv.l[1]}</h3>${lv.nx?`<div class="bar" style="margin-top:8px;height:8px"><i style="width:${100*(S.full-lv.l[0])/(lv.nx[0]-lv.l[0])}%;background:var(--gd)"></i></div><div class="xs mu" style="margin-top:6px">${lv.nx[0]-S.full} giorni pieni (≥ 70) per diventare ${lv.nx[1]}</div>`:`<div class="xs mu">Livello massimo raggiunto. Continua così.</div>`}</div></div>
+<div class="row" style="gap:12px;margin-top:14px;align-items:center">${zeno(S.cur>0?"happy":"ok",56)}<div class="f1"><div class="ey">Livello ${XL.n} · ${S.xp.toLocaleString("it-IT")} XP · questa settimana ${S.xpW}</div><div class="bar" style="margin-top:8px;height:8px"><i style="width:${100*(S.xp-XL.a)/(XL.b-XL.a)}%;background:var(--ac)"></i></div><div class="xs mu" style="margin-top:6px">${(XL.b-S.xp).toLocaleString("it-IT")} XP al livello ${XL.n+1}. Ogni punto del giorno vale 1 XP.</div></div></div>
+<div class="stats" style="margin-top:14px;grid-template-columns:1fr 1fr 1fr"><div class="st"><small>SERIE</small><b>🔥 ${S.cur}</b></div><div class="st"><small>RECORD</small><b>${S.best}</b></div><div class="st"><small>GIORNI PIENI</small><b>${S.full}</b></div></div><div class="xs mu" style="margin-top:10px">🧊 Un salva-serie a settimana: se un giorno non arrivi a ${GOAL} punti, la serie non si spezza. ${S.fzOk?"Questa settimana è ancora disponibile.":"Usato questa settimana"+(S.fzWeek?" ("+GN[pd(S.fzWeek).getDay()].toLowerCase()+")":"")+"."}</div></section>
 ${goalsBox()}
 <div class="seg" role="tablist">${[["d","Giorno"],["w","Settimana"],["m","Mese"],["y","Anno"]].map(([k,l])=>`<button class="${pv==k?"on":""}" onclick="pv='${k}';po=0;draw()">${l}</button>`).join("")}</div>`;
  const nav=(lab,canNext)=>`<div class="nv"><button onclick="po--;draw(1)" aria-label="Precedente">‹</button><b>${lab}</b><button onclick="po++;draw(1)" ${canNext?"":"disabled"} aria-label="Successivo">›</button></div>`;
@@ -714,7 +770,7 @@ function tsp(n){const s=spL();s.i[n]=!s.i[n];if(!s.i[n])delete s.i[n];buzz();sv(
 function spAll(){const s=spL();s.d=1;agg(ORD).forEach(x=>s.i[x[0]]=1);sv();toast("Spesa fatta ✓");rd()}
 function spReset(){st.sp[spKey()]={i:{},d:0};sv();rd()}
 function xDel(ds,i){const g=L(ds);g.x.splice(i,1);sv();rd()}
-function go(t){tab=t;if(t=="w"||t=="m")sel=new Date().getDay();nav();draw()}
+function go(t){if(t=="x"){PD=null;proLoad().then(()=>{if(tab=="x")draw(1)})}tab=t;if(t=="w"||t=="m")sel=new Date().getDay();nav();draw()}
 function jump(id){const e=$(id);e&&e.scrollIntoView({behavior:"smooth",block:"center"})}
 
 /* ---------- fogli ---------- */
@@ -763,6 +819,7 @@ ${p.focus?`<h4>Obiettivo principale</h4><div class="two"><label class="fl"><span
 <h4>Premio</h4>${p.reward?`<div class="two"><label class="fl"><span>Premio</span><input value="${esc(p.reward.ic+" "+p.reward.n)}" maxlength="30" onchange="plEdit(x=>{const v=this.value.trim().split(' ');x.reward.ic=v.length>1?v.shift():'🎁';x.reward.n=v.join(' ')||'Premio'})"></label><label class="fl"><span>Si sblocca a (punti)</span><input type="number" inputmode="numeric" value="${p.reward.min}" onchange="plEdit(x=>x.reward.min=Math.min(100,Math.max(30,parseInt(this.value)||70)))"></label></div><button class="btn g sm" onclick="plEdit(x=>x.reward=null);setS()">Rimuovi il premio</button>`:`<button class="btn g sm" onclick="plEdit(x=>x.reward={n:'Premio',ic:'🎁',min:70});setS()">＋ Aggiungi un premio giornaliero</button>`}
 <h4 id="s-hb">Abitudini</h4><div id="hbe">`+st.hb.map((x,i)=>`<div class="he"><input class="ei" value="${esc(x.i)}" maxlength="4" onchange="st.hb[${i}].i=this.value||'•';sv();draw(1)" aria-label="Icona"><input value="${esc(x.n)}" maxlength="44" onchange="st.hb[${i}].n=this.value||'Abitudine';sv();draw(1)" aria-label="Nome"><button onclick="st.hb.splice(${i},1);sv();setS('hb');draw(1)" aria-label="Elimina">×</button></div>`).join("")+`</div><div class="he"><input class="ei" id="nhi" value="✳️" maxlength="4"><input id="nhn" placeholder="Nuova abitudine" maxlength="44"><button onclick="hbAdd()" aria-label="Aggiungi">＋</button></div>
 ${p.meals?`<h4>Calorie</h4><label class="fl"><span>Obiettivo giornaliero (0 = automatico dal piano)</span><input type="number" inputmode="numeric" value="${st.set.kt||0}" onchange="st.set.kt=Math.max(0,parseInt(this.value)||0);sv();draw(1)"></label>`:""}
+${ntBox()}${teamBox()}
 <h4>Aspetto</h4><div class="chips">${[["auto","Automatico"],["light","Chiaro"],["dark","Scuro"]].map(([k,l])=>`<button class="chip ${th==k?"on":""}" onclick="st.set.th='${k}';theme();sv();setS()">${l}</button>`).join("")}</div>
 ${me&&me.admin?`<h4>Amministrazione</h4><a class="btn g sm" href="/api/waitlist?csv=1">⬇︎ Scarica la lista d’attesa Pro (CSV)</a><a class="btn g sm" href="/pro" target="_blank" rel="noopener">Apri la landing Pro</a>`:""}<h4>Dati</h4><button class="btn g sm" onclick="exp()">⬇︎ Esporta tutti i miei dati (JSON)</button>${me?`<button class="btn g sm" onclick="out()">Esci (${esc(me.username)})</button>`:""}
 <button class="btn" onclick="closeS()">Fatto</button>`);
@@ -805,10 +862,116 @@ ${e.ld?`<div class="ld" style="margin:18px 0 0"><input type="number" inputmode="
 <button class="lk" style="align-self:flex-start;margin-top:16px" onclick="inf('${id}')">▶ Come si esegue</button></div>
 <div class="fb"><button class="btn g" onclick="fb()" aria-label="Indietro">←</button><button class="btn g" onclick="rt(this,${rs})">⏱ ${e.rec?esc(e.rec):"90”"}</button><button class="btn" onclick="fn()">Fatto · avanti</button></div>`}
 
+/* ---------- professionisti, inviti, messaggi e notifiche ---------- */
+let PROS=[],PUSH=false,PD=null,pmode=null;
+const SCN={w:"Allenamento",m:"Alimentazione",wm:"Allenamento e alimentazione"};
+const SCS={w:"allenamenti, abitudini, sonno e peso",m:"pasti, calorie, abitudini, sonno e peso",wm:"allenamenti, pasti, abitudini, sonno e peso"};
+const KN={dolore:["🔴","Dolore"],difficolta:["🟠","Difficoltà"],domanda:["💬","Domanda"],msg:["💬","Messaggio"]};
+const ago=t=>{if(!t)return"mai";const m=Math.round((Date.now()-t)/60000);return m<60?(m<2?"adesso":m+" min fa"):m<1440?Math.round(m/60)+" h fa":Math.round(m/1440)+" g fa"};
+const qp=k=>new URLSearchParams(location.search).get(k);
+function clrQ(){try{history.replaceState(null,"",location.pathname)}catch(e){}}
+
+/* calcola le statistiche di un cliente con lo stesso motore dell'app, sul suo stato */
+function withSt(s,pr,fn){const S0=st,P0=prof;try{st=mig(clone(s||{}),null);prof=pr||{sport:false,team:[],match:-1};build();return fn()}catch(e){return null}finally{st=S0;prof=P0;build()}}
+function cStats(c){return withSt(c.state,c.profile,()=>{if(!hasPlan())return{np:1};const t=today(),w7=[...Array(7)].map((_,i)=>iso(addD(t,-6+i))),a=agr(w7),S=streaks(),days=w7.map(d=>({d,sc:inR(d)?dstat(d).sc:null}));
+ const act=Object.keys(st.log||{}).filter(d=>{const g=st.log[d];return g&&Object.keys(g).some(k=>k!="z")}).sort().pop()||null;
+ const wt=Object.keys(st.wt||{}).sort(),w1=wt.length?st.wt[wt[wt.length-1]]:null,w0=wt.length>1?st.wt[wt.find(d=>d>=iso(addD(t,-28)))||wt[0]]:null;
+ return{a,S,days,act,w1,w0,plan:PL().name}})}
+function needs(c,x){const r=[];if(c.status=="off")return r;
+ if(c.un)r.push({p:c.uk=="dolore"?0:c.uk=="difficolta"?1:2,t:(KN[c.uk]||KN.domanda)[0]+" "+(c.uk=="dolore"?"Ha segnalato un dolore":c.uk=="difficolta"?"Ha segnalato una difficoltà":"Ti ha scritto"),b:"Rispondi"});
+ if(x&&!x.np){const ia=x.act?dd(pd(x.act),today()):99;if(ia>=3)r.push({p:3,t:ia>=99?"Nessuna attività dal collegamento":"Nessuna attività da "+ia+" giorni",b:"Scrivi"});
+  else if(x.a&&x.a.sc!=null&&x.a.sc<45)r.push({p:4,t:"Aderenza bassa: media "+Math.round(x.a.sc)+" punti negli ultimi giorni",b:"Apri"})}
+ if(x&&x.np)r.push({p:3,t:"Non ha ancora un piano attivo",b:"Apri"});
+ if(Date.now()-c.since<3*864e5&&!c.un)r.push({p:5,t:"Nuovo cliente: dagli il benvenuto",b:"Scrivi"});
+ return r.sort((a,b)=>a.p-b.p)}
+async function proLoad(){const r=await api("pro");if(!r.ok){PD=null;return}PD=r.d;PD.clients.forEach(c=>{c.x=cStats(c);c.nd=needs(c,c.x)})}
+function vPro(){if(!PD)return `<header class="hd"><div><div class="ey">Pannello Pro</div><h1>Caricamento…</h1></div></header><div class="empty">Un momento…</div>`;
+ const C=PD.clients,on=C.filter(c=>c.status=="on"),nd=on.filter(c=>c.nd.length).sort((a,b)=>a.nd[0].p-b.nd[0].p),un=C.reduce((a,c)=>a+(c.un||0),0);
+ const hr=new Date().getHours(),sal=hr<13?"Buongiorno":hr<18?"Buon pomeriggio":"Buonasera";
+ let h=`<header class="hd"><div><div class="ey">Pannello Pro · ${esc(PD.pro.roles.split(",").map(r=>r=="pt"?"Personal trainer":"Nutrizionista").join(" e "))}</div><h1>${sal}, ${esc(PD.pro.name.split(" ")[0])}</h1></div><button class="ib" onclick="go('t')" aria-label="Torna alla mia giornata">${IC.home}</button></header>
+<div class="stats" style="grid-template-columns:1fr 1fr 1fr"><div class="st"><small>CLIENTI ATTIVI</small><b>${on.length}</b></div><div class="st"><small>DA SEGUIRE OGGI</small><b style="color:${nd.length?"var(--ac)":"inherit"}">${nd.length}</b></div><div class="st"><small>MESSAGGI</small><b>${un}</b></div></div>
+<section class="card"><div class="ch"><h3>Chi ha bisogno di te oggi</h3><span>per urgenza</span></div>`+(nd.length?nd.map(c=>`<button class="pc" onclick="pcS(${c.id})">${avt(c.username)}<span class="f1"><b>${esc(c.username)}</b><small>${esc(c.nd[0].t)}${c.nd.length>1?" · +"+(c.nd.length-1):""}</small></span><span class="go">${c.nd[0].b} ›</span></button>`).join(""):`<div class="sm mu" style="padding:6px 0">Nessuno: i tuoi clienti procedono da soli. ${on.length?"":"Invita il primo cliente qui sotto."}</div>`)+`</section>
+<section class="card"><div class="ch"><h3>I tuoi clienti</h3><span>${C.length}</span></div>`+(C.length?C.map(c=>{const x=c.x||{},sc=x.a&&x.a.sc!=null?Math.round(x.a.sc):null;return `<button class="pc ${c.status=="off"?"off":""}" onclick="pcS(${c.id})">${avt(c.username)}<span class="f1"><b>${esc(c.username)}${c.un?` <span class="bdg">${c.un}</span>`:""}</b><small>${esc(SCN[c.scope])}${c.status=="off"?" · in pausa":x.np?" · senza piano":" · attività "+(x.act?(x.act==iso(today())?"oggi":dd(pd(x.act),today())+" g fa"):"—")}</small>${sc!=null&&c.status=="on"?`<span class="ad"><i style="width:${sc}%;background:${scC(sc)}"></i></span>`:""}</span><span class="scn">${sc!=null&&c.status=="on"?sc:""}</span></button>`}).join(""):`<div class="sm mu" style="padding:6px 0">Ancora nessun cliente.</div>`)+`<div class="xs mu" style="margin-top:8px">Il numero a destra è la media dei punti degli ultimi giorni (0-100).</div></section>
+<button class="btn" onclick="invS()">＋ Invita un cliente</button>`;
+ if(PD.invites.length)h+=`<section class="card"><div class="ch"><h3>Inviti in attesa</h3><span>${PD.invites.length}</span></div>`+PD.invites.map(i=>`<div class="row" style="padding:8px 0;border-top:1px solid var(--bd)"><span class="f1"><b>${esc(i.label||"Senza nome")}</b><br><small class="mu">${esc(SCN[i.scope])} · creato ${ago(i.created)}</small></span><button class="lk" onclick="invShow('${i.code}')">Link</button><button class="lk" style="margin-left:12px;color:var(--mu)" onclick="invDel('${i.code}')">Elimina</button></div>`).join("")+`</section>`;
+ h+=`<p class="xs mu" style="text-align:center;margin:18px 0 0">Vedi solo l’ambito che il cliente ha accettato, mai il suo diario personale.</p>`;
+ return h}
+const avt=n=>`<span class="av" aria-hidden="true">${esc((n||"?").slice(0,2).toUpperCase())}</span>`;
+function invS(){sheet(`<h2>Invita un cliente</h2><p class="sm mu">Crei un link personale: il cliente lo apre, si registra o accede, e ti trova già collegato.</p>
+<label class="fl"><span>Nome del cliente (solo per te)</span><input id="ivl" maxlength="40" placeholder="es. Luca B."></label>
+<p class="sm b" style="margin:14px 0 6px">Cosa segui tu</p><div class="chips" id="ivs">${["w","m","wm"].map((k,i)=>`<button class="chip ${i==0?"on":""}" data-k="${k}" onclick="[...this.parentNode.children].forEach(x=>x.classList.toggle('on',x==this))">${SCN[k]}</button>`).join("")}</div>
+<p class="xs mu" style="margin-top:8px">Il cliente vede prima di accettare cosa potrai vedere tu.</p>
+<button class="btn" onclick="invMk()">Crea il link d’invito</button><button class="btn g" onclick="closeS()">Annulla</button>`)}
+async function invMk(){const k=$("ivs").querySelector(".on").dataset.k,r=await api("pro/invite","POST",{scope:k,label:$("ivl").value});if(!r.ok){toast(r.d.e||"Errore");return}await proLoad();draw(1);invShow(r.d.code)}
+function invUrl(c){return location.origin+"/?inv="+c}
+function invShow(c){const u=invUrl(c),i=(PD&&PD.invites.find(x=>x.code==c))||{},t=`Ciao${i.label?" "+i.label.split(" ")[0]:""}! Ti seguo su Elite GK: il tuo piano diventa la tua giornata, ora per ora. Apri il link, crea il tuo account e siamo collegati: ${u}`;
+ sheet(`<h2>Link d’invito</h2><p class="sm mu">${esc(i.label||"Cliente")} · ${esc(SCN[i.scope]||"")}. Vale una sola volta.</p><div class="card" style="margin:10px 0;word-break:break-all;font-weight:700">${esc(u)}</div>
+<a class="btn" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">Invia su WhatsApp</a><button class="btn g" onclick="cp('${u}')">Copia il link</button><button class="btn g" onclick="closeS()">Fatto</button>`)}
+async function cp(t){try{await navigator.clipboard.writeText(t);toast("Copiato ✓")}catch(e){prompt("Copia:",t)}}
+async function invDel(c){await api("pro/invite/del","POST",{code:c});await proLoad();draw(1)}
+async function pcS(id){const c=PD.clients.find(x=>x.id==id);if(!c)return;const x=c.x||{},r=await api("pro/notes?c="+id),N=r.ok?r.d.notes:[];c.un=0;c.nd=needs(c,x);
+ const a=x.a||{},w=c.scope!="m",m=c.scope!="w";
+ const met=[];if(!x.np){met.push(["SERIE","🔥 "+(x.S?x.S.cur:0)]);if(w)met.push(["ALLENAMENTI",a.woP?a.woD+"/"+a.woP:"—"]);if(m)met.push(["KCAL MEDIE",a.kc?fmtK(a.kc):"—"]);met.push(["SONNO",a.sl?n1(a.sl)+" h":"—"]);met.push(["ABITUDINI",a.hb!=null?Math.round(a.hb)+"%":"—"]);if(x.w1)met.push(["PESO",n1(x.w1)+" kg"+(x.w0&&x.w0!=x.w1?` <small>(${x.w1-x.w0>0?"+":""}${n1(x.w1-x.w0)})</small>`:"")])}
+ sheet(`<div class="row" style="gap:12px">${avt(c.username)}<div class="f1"><h2 style="margin:0">${esc(c.username)}</h2><div class="sm mu">${esc(SCN[c.scope])} · collegato da ${ago(c.since)}${x.plan?" · "+esc(x.plan):""}</div></div></div>
+${x.np?`<div class="card">Non ha ancora un piano attivo. Mandaci la tua scheda in PDF o Excel: la convertiamo noi e la colleghiamo al suo account.</div>`:`<p class="sm b" style="margin:16px 0 6px">Ultimi 7 giorni</p><div class="d7">${x.days.map(d=>`<div><i style="height:${d.sc==null?0:Math.max(4,d.sc)}%;background:${d.sc==null?"var(--trk)":scC(d.sc)}"></i><small>${GD[pd(d.d).getDay()]}</small></div>`).join("")}</div>
+<div class="stats" style="grid-template-columns:1fr 1fr 1fr;margin-top:12px">${met.map(([l,v])=>`<div class="st"><small>${l}</small><b>${v}</b></div>`).join("")}</div>`}
+<p class="sm b" style="margin:18px 0 6px">Messaggi</p><div class="th">${N.length?N.slice().reverse().map(n=>`<div class="ms ${n.dir=="p2c"?"me":""}">${n.dir=="c2p"?`<b>${(KN[n.kind]||KN.domanda)[0]} ${(KN[n.kind]||KN.domanda)[1]}</b> `:""}${esc(n.text)}<small>${ago(n.created)}</small></div>`).join(""):`<div class="sm mu">Nessun messaggio.</div>`}</div>
+<label class="fl"><span>Scrivi a ${esc(c.username)}</span><textarea id="pmt" rows="3" maxlength="500" placeholder="es. Questa settimana sostituisci lo squat con la pressa"></textarea></label><button class="btn" onclick="pmSend(${id})">Invia</button>
+<button class="btn g" onclick="pLink(${id},'${c.status=="on"?"off":"on"}')">${c.status=="on"?"Metti in pausa il collegamento":"Riattiva il collegamento"}</button><button class="btn g" onclick="closeS()">Chiudi</button>`);
+ draw(1)}
+async function pmSend(id){const t=$("pmt").value.trim();if(!t)return;const r=await api("pro/msg","POST",{client:id,text:t});if(r.ok){toast("Inviato ✓");pcS(id)}else toast(r.d.e||"Errore")}
+async function pLink(id,s){await api("pro/link","POST",{client:id,status:s});await proLoad();closeS();draw(1);toast(s=="off"?"Collegamento in pausa":"Collegamento riattivato")}
+
+/* lato cliente: il tuo team e i messaggi */
+function teamCard(){if(!me||!PROS.length)return"";const act=PROS.filter(p=>p.status=="on"),un=PROS.reduce((a,p)=>a+(p.un||0),0);if(!act.length)return"";
+ return `<section class="card"><div class="ch"><h3>Il tuo team</h3>${un?`<span class="bdg">${un} ${un==1?"nuovo":"nuovi"}</span>`:""}</div>`+act.map(p=>`<div class="row" style="padding:6px 0">${avt(p.name)}<span class="f1"><b>${esc(p.name)}</b><br><small class="mu">${esc(SCN[p.scope])}</small></span></div>`).join("")+`<div class="two"><button class="btn sm ${un?"":"g"}" onclick="msgS()">${un?"Leggi i messaggi":"Messaggi"}</button><button class="btn g sm" onclick="noteS()">Segnala o chiedi</button></div></section>`}
+async function msgS(){const r=await api("notes"),N=r.ok?r.d.notes:[];PROS.forEach(p=>p.un=0);
+ sheet(`<h2>Messaggi</h2><div class="th">${N.length?N.slice().reverse().map(n=>`<div class="ms ${n.dir=="c2p"?"me":""}">${n.dir=="p2c"?`<b>${esc(n.name)}</b> `:`<b>${(KN[n.kind]||KN.domanda)[0]} a ${esc(n.name)}</b> `}${esc(n.text)}<small>${ago(n.created)}</small></div>`).join(""):`<div class="sm mu">Ancora nessun messaggio.</div>`}</div><button class="btn" onclick="noteS()">Scrivi</button><button class="btn g" onclick="closeS()">Chiudi</button>`);rd()}
+function noteS(){const act=PROS.filter(p=>p.status=="on");if(!act.length)return;
+ sheet(`<h2>Segnala o chiedi</h2>${act.length>1?`<p class="sm b" style="margin:6px 0">A chi</p><div class="chips" id="npr">${act.map((p,i)=>`<button class="chip ${i==0?"on":""}" data-p="${p.pro}" onclick="[...this.parentNode.children].forEach(x=>x.classList.toggle('on',x==this))">${esc(p.name)}</button>`).join("")}</div>`:`<input type="hidden" id="np1" value="${act[0].pro}">`}
+<p class="sm b" style="margin:14px 0 6px">Di cosa si tratta</p><div class="chips" id="nk">${["dolore","difficolta","domanda"].map((k,i)=>`<button class="chip ${i==2?"on":""}" data-k="${k}" onclick="[...this.parentNode.children].forEach(x=>x.classList.toggle('on',x==this))">${KN[k][0]} ${KN[k][1]}</button>`).join("")}</div>
+<label class="fl"><span>Messaggio</span><textarea id="ntx" rows="4" maxlength="500" placeholder="es. Fastidio al ginocchio sinistro sullo squat bulgaro"></textarea></label>
+<button class="btn" onclick="noteSend()">Invia</button><button class="btn g" onclick="closeS()">Annulla</button>`)}
+async function noteSend(){const t=$("ntx").value.trim();if(!t){toast("Scrivi un messaggio");return}const pro=$("npr")?$("npr").querySelector(".on").dataset.p:$("np1").value,k=$("nk").querySelector(".on").dataset.k;
+ const r=await api("note","POST",{pro:+pro,kind:k,text:t});if(r.ok){closeS();toast("Inviato al tuo professionista ✓")}else toast(r.d.e||"Errore")}
+
+/* inviti: accettazione */
+async function invCheck(){let c=null;try{c=sessionStorage.getItem("inv")}catch(e){}if(!c||!me)return;const r=await api("invite?c="+encodeURIComponent(c));if(!r.ok){try{sessionStorage.removeItem("inv")}catch(e){}toast(r.d.e||"Invito non valido");return}
+ sheet(`<h2>Invito di ${esc(r.d.name)}</h2><p>${esc(r.d.name)} ti segue per: <b>${esc(SCN[r.d.scope])}</b>.</p><div class="card" style="margin:10px 0"><b>Cosa potrà vedere</b><div class="sm mu" style="margin-top:4px">I tuoi ${esc(SCS[r.d.scope])}, e i messaggi che gli scrivi. Mai il tuo diario dell’esame serale. Puoi interrompere il collegamento quando vuoi dalle impostazioni.</div></div>
+<button class="btn" onclick="invAcc('${esc(c)}')">Accetta e collegati</button><button class="btn g" onclick="try{sessionStorage.removeItem('inv')}catch(e){};closeS()">Non ora</button>`)}
+async function invAcc(c){const r=await api("invite/accept","POST",{code:c});try{sessionStorage.removeItem("inv")}catch(e){}closeS();if(r.ok){toast("Collegato con "+(r.d.name||"il tuo professionista")+" ✓");const m=await api("me");if(m.ok)PROS=m.d.pros||[];rd()}else toast(r.d.e||"Errore")}
+async function pStop(pro,n){if(!confirm("Interrompere il collegamento con "+n+"? Non vedrà più i tuoi progressi."))return;await api("link/stop","POST",{pro});const m=await api("me");if(m.ok)PROS=m.d.pros||[];setS();rd()}
+
+/* account professionista */
+async function proAct(){const roles=[...document.querySelectorAll("#prr .on")].map(x=>x.dataset.r),r=await api("pro/activate","POST",{code:$("prc").value.trim(),name:$("prn").value.trim(),roles});
+ if(r.ok){const m=await api("me");if(m.ok)me=m.d.user;closeS();toast("Account professionista attivo ✓");go("x")}else toast(r.d.e||"Errore")}
+
+/* notifiche push */
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform=="MacIntel"&&navigator.maxTouchPoints>1);
+const isStand=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const u8k=s=>{const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))};
+async function pushSub(){try{const reg=await navigator.serviceWorker.ready;return await reg.pushManager.getSubscription()}catch(e){return null}}
+async function pushOn(){if(!("serviceWorker"in navigator)||!("PushManager"in window)){if(isIOS()&&!isStand())iosHelp();else toast("Questo browser non supporta le notifiche");return}
+ const perm=await Notification.requestPermission();if(perm!="granted"){toast("Notifiche non consentite: puoi attivarle dalle impostazioni del telefono");return}
+ const k=await api("push/key");if(!k.ok){toast("Notifiche non ancora attive sul server");return}
+ try{const reg=await navigator.serviceWorker.ready;let s=await reg.pushManager.getSubscription();if(!s)s=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8k(k.d.key)});
+  const r=await api("push/sub","POST",s.toJSON());if(r.ok){try{localStorage.setItem("egkpush","1")}catch(e){}toast("Notifiche attive ✓");setS("nt")}}catch(e){toast("Non riesco ad attivare le notifiche")}}
+async function pushOff(){const s=await pushSub();if(s){await api("push/unsub","POST",{endpoint:s.endpoint});await s.unsubscribe().catch(()=>{})}try{localStorage.removeItem("egkpush")}catch(e){}toast("Notifiche disattivate");setS("nt")}
+async function pushTest(){const r=await api("push/test","POST");toast(r.ok&&r.d.n?"Inviata: arriva tra pochi secondi":"Nessun dispositivo raggiunto: riattiva le notifiche")}
+async function pushRenew(){if(!PUSH||!me)return;try{if(localStorage.getItem("egkpush")!="1"||Notification.permission!="granted")return;const k=await api("push/key");if(!k.ok)return;const reg=await navigator.serviceWorker.ready;let s=await reg.pushManager.getSubscription();if(!s)s=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8k(k.d.key)});api("push/sub","POST",s.toJSON())}catch(e){}}
+function iosHelp(){sheet(`<h2>Notifiche su iPhone</h2><p>Su iPhone le notifiche arrivano solo se l’app è sulla schermata Home.</p><ol class="sm" style="line-height:1.7"><li>In Safari tocca <b>Condividi</b> (il quadrato con la freccia).</li><li>Scegli <b>Aggiungi alla schermata Home</b>.</li><li>Apri Elite GK dall’icona e torna qui per attivare le notifiche.</li></ol><button class="btn" onclick="closeS()">Ho capito</button>`)}
+function ntBox(){if(!me||!PUSH)return"";const on=(()=>{try{return localStorage.getItem("egkpush")=="1"&&Notification.permission=="granted"}catch(e){return false}})();
+ return `<h4 id="s-nt">Notifiche</h4><div class="sm mu" style="margin-bottom:8px">${on?"Attive su questo dispositivo: messaggi dal tuo team e avvisi importanti.":isIOS()&&!isStand()?"Su iPhone servono l’app sulla schermata Home.":"Ricevi i messaggi del tuo team e gli avvisi importanti."}</div>${on?`<div class="two"><button class="btn g sm" onclick="pushTest()">Invia una prova</button><button class="btn g sm" onclick="pushOff()">Disattiva</button></div>`:`<button class="btn sm" onclick="${isIOS()&&!isStand()?"iosHelp()":"pushOn()"}">🔔 Attiva le notifiche</button>`}`}
+function teamBox(){if(!me)return"";let h="";
+ if(PROS.length)h+=`<h4>Il tuo team</h4>`+PROS.map(p=>`<div class="row" style="padding:8px 0;border-top:1px solid var(--bd)">${avt(p.name)}<span class="f1"><b>${esc(p.name)}</b><br><small class="mu">${esc(SCN[p.scope])}${p.status=="off"?" · collegamento interrotto":""}</small></span>${p.status=="on"?`<button class="lk" style="color:var(--mu)" onclick="pStop(${p.pro},'${esc(p.name).replace(/'/g,"")}')">Interrompi</button>`:""}</div>`).join("");
+ if(me.pro)h+=`<h4>Area professionista</h4><button class="btn sm" onclick="closeS();go('x')">Apri il pannello Pro</button>`;
+ else if(me.canPro)h+=`<h4>Sei un professionista?</h4><details><summary class="sm b" style="cursor:pointer;padding:6px 0">Attiva il pannello Pro con il codice del pilota</summary><label class="fl"><span>Nome e cognome (lo vedono i clienti)</span><input id="prn" maxlength="60" value="${esc(cap(me.username))}"></label><div class="chips" id="prr"><button class="chip on" data-r="pt" onclick="this.classList.toggle('on')">Personal trainer</button><button class="chip" data-r="nu" onclick="this.classList.toggle('on')">Nutrizionista</button></div><label class="fl"><span>Codice pilota</span><input id="prc" autocapitalize="characters"></label><button class="btn sm" onclick="proAct()">Attiva</button></details>`;
+ return h}
+
 /* ---------- navigazione e disegno ---------- */
 const TABS=[["t","Oggi","home"],["w","Allenamento","gym"],["m","Dieta","food"],["p","Spesa","cart"],["j","Percorso","path"]];
 function nav(){$("nav").innerHTML=TABS.map(([k,l,i])=>`<button class="${tab==k?"on":""}" onclick="go('${k}')" aria-current="${tab==k?"page":"false"}">${IC[i]}${l}</button>`).join("")}
-function draw(keep){$("v").innerHTML=!hasPlan()?vWelcome():tab=="t"?vToday():tab=="w"?vWork():tab=="m"?vDiet():tab=="p"?vShop():vPath();if(!keep)scrollTo(0,0);
+function draw(keep){$("v").innerHTML=tab=="x"?vPro():!hasPlan()?vWelcome():tab=="t"?vToday():tab=="w"?vWork():tab=="m"?vDiet():tab=="p"?vShop():tab=="x"?vPro():vPath();if(!keep)scrollTo(0,0);
  if(tab=="m"&&!keep&&iso(selDate())==iso(today()))setTimeout(()=>{const n=document.querySelector(".ml.cur");n&&n.scrollIntoView({block:"center",behavior:"smooth"})},120)}
 let lastDay=iso(today());
 setInterval(()=>{if(document.hidden||$("sh").classList.contains("on")||$("fo").classList.contains("on"))return;const d=iso(today());if(d!=lastDay){lastDay=d;sel=new Date().getDay()}if(tab=="t")rd()},60000);
@@ -816,13 +979,15 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&tab=="t"&
 
 /* ---------- account e sincronizzazione ---------- */
 const api=(p,m="GET",b)=>fetch("/api/"+p,{method:m,headers:b?{"content-type":"application/json"}:{},body:b?JSON.stringify(b):undefined,credentials:"same-origin"}).then(async r=>({ok:r.ok,s:r.status,d:await r.json().catch(()=>({}))}));
-function start(){build();theme();$("au").classList.remove("on");nav();draw()}
-async function boot(){theme();try{const r=await api("me");if(r.ok){me=r.d.user;prof=r.d.profile;const s=r.d.state;
+function start(){build();theme();$("au").classList.remove("on");nav();draw();try{pSc=dstat(iso(today())).sc||0}catch(e){}}
+async function boot(){theme();try{const r=await api("me");if(r.ok){me=r.d.user;prof=r.d.profile;PROS=r.d.pros||[];PUSH=!!r.d.push;const s=r.d.state;
   if(s&&Object.keys(s).length)st=mig(s,me.username=="gaetano"||s.d||s.l?"gk":null);
   else{st=fresh(me.username=="gaetano"?"gk":null);api("state","PUT",st)}
-  lp();try{localStorage.setItem("egk",JSON.stringify(st))}catch(e){}start();return}if(r.s==401){authUI();return}}catch(e){}start()}
-function authUI(m="login"){const Lg=m=="login";$("au").classList.add("on");$("au").innerHTML=`<div class="fc"><span class="tg" style="align-self:flex-start">ELITE GK</span><h1>${Lg?"Bentornato":"Inizia il percorso"}</h1><p class="mu" style="margin:0 0 18px">${Lg?"Accedi per riprendere i tuoi progressi.":"Crea il tuo account: ognuno ha il suo piano, le sue abitudini e i suoi progressi."}</p><label class="fl"><span>Utente</span><input id="u" autocapitalize="none" autocomplete="username"></label><label class="fl"><span>Password</span><input id="p" type="password" placeholder="minimo 8 caratteri" autocomplete="${Lg?"current-password":"new-password"}" onkeydown="if(event.key=='Enter')doAuth('${m}')"></label>`+(Lg?"":`<label class="row sm" style="margin:6px 0"><input type="checkbox" id="spo" style="width:20px;height:20px"> Gioco a futsal (calendario squadra e partita)</label>`)+`<p id="er" class="sm" style="color:var(--ac);min-height:1.4em"></p><button class="btn" onclick="doAuth('${m}')">${Lg?"Entra":"Registrati"}</button><button class="btn g" onclick="authUI('${Lg?"reg":"login"}')">${Lg?"Crea un account":"Ho già un account"}</button></div>`}
-async function doAuth(m){const r=await api(m=="login"?"login":"register","POST",{u:$("u").value,p:$("p").value,sport:$("spo")?$("spo").checked:true});if(r.ok){if(m=="reg"){try{localStorage.removeItem("egk");localStorage.removeItem("egkp")}catch(e){}st=fresh(null)}else{try{localStorage.removeItem("egk")}catch(e){}}boot()}else $("er").textContent=r.d.e||"Errore, riprova"}
+  lp();try{localStorage.setItem("egk",JSON.stringify(st))}catch(e){}start();afterLogin();return}if(r.s==401){let ic=null;try{ic=sessionStorage.getItem("inv")}catch(e){}if(ic){const iv=await api("invite?c="+encodeURIComponent(ic));IVI=iv.ok?iv.d:null;authUI(IVI?"reg":"login")}else authUI();return}}catch(e){}start()}
+function afterLogin(){const P=qp("pro"),M=qp("msg");clrQ();if((P||!hasPlan())&&me&&me.pro)go("x");else if(M)msgS();setTimeout(invCheck,400);pushRenew()}
+let IVI=null;(()=>{const c=qp("inv");if(c){try{sessionStorage.setItem("inv",c)}catch(e){}}})();
+function authUI(m="login"){const Lg=m=="login";$("au").classList.add("on");$("au").innerHTML=`<div class="fc"><span class="tg" style="align-self:flex-start">ELITE GK</span>${IVI?`<div class="ivb">🤝 <b>${esc(IVI.name)}</b> ti ha invitato a seguire il tuo percorso con lui (${esc(SCN[IVI.scope])}). Crea il tuo account o accedi: vi collegate subito dopo.</div>`:""}<h1>${Lg?"Bentornato":"Inizia il percorso"}</h1><p class="mu" style="margin:0 0 18px">${Lg?"Accedi per riprendere i tuoi progressi.":"Crea il tuo account: ognuno ha il suo piano, le sue abitudini e i suoi progressi."}</p><label class="fl"><span>Utente</span><input id="u" autocapitalize="none" autocomplete="username"></label><label class="fl"><span>Password</span><input id="p" type="password" placeholder="minimo 8 caratteri" autocomplete="${Lg?"current-password":"new-password"}" onkeydown="if(event.key=='Enter')doAuth('${m}')"></label>`+(Lg?"":`<label class="row sm" style="margin:6px 0"><input type="checkbox" id="spo" style="width:20px;height:20px"> Gioco a futsal (calendario squadra e partita)</label>`)+`<p id="er" class="sm" style="color:var(--ac);min-height:1.4em"></p><button class="btn" onclick="doAuth('${m}')">${Lg?"Entra":"Registrati"}</button><button class="btn g" onclick="authUI('${Lg?"reg":"login"}')">${Lg?"Crea un account":"Ho già un account"}</button></div>`}
+async function doAuth(m){let ic=null;try{ic=sessionStorage.getItem("inv")}catch(e){}const r=await api(m=="login"?"login":"register","POST",{u:$("u").value,p:$("p").value,sport:$("spo")?$("spo").checked:false,inv:ic||undefined});if(r.ok){if(m=="reg"){try{localStorage.removeItem("egk");localStorage.removeItem("egkp")}catch(e){}st=fresh(null)}else{try{localStorage.removeItem("egk")}catch(e){}}boot()}else $("er").textContent=r.d.e||"Errore, riprova"}
 async function out(){await api("logout","POST");try{localStorage.clear()}catch(e){}location.reload()}
 if("serviceWorker"in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
 boot();

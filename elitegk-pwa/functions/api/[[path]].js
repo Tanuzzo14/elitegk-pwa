@@ -1,6 +1,23 @@
 // Elite GK API - Cloudflare Pages Functions + D1 (binding: DB)
 import {buildPushHTTPRequest} from "../../lib/pushforge.js";
-const J=(o,s=200,h={})=>new Response(JSON.stringify(o),{status:s,headers:{"content-type":"application/json","cache-control":"no-store",...h}});
+const J=(o,s=200,h={})=>new Response(JSON.stringify(o),{status:s,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"same-origin",...h}});
+// ---- Sicurezza
+// SQL: tutte le query usano parametri (bind), mai testo dell'utente concatenato.
+// cln: pulisce ricorsivamente ciò che arriva dagli utenti prima di salvarlo: niente HTML, apici o codice
+// può finire nelle schermate di un altro utente (cliente → professionista e viceversa).
+const KEY=/^[^<>"'`\\\u0000-\u001f]{1,80}$/;
+function cln(v,d=0){if(d>14)return null;if(typeof v=="string")return v.slice(0,4000).replace(/[<>`\\'"]/g,c=>({"<":"‹",">":"›","`":"’","\\":"/","'":"’",'"':"”"}[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"");
+ if(typeof v=="number")return Number.isFinite(v)?v:0;if(typeof v=="boolean"||v===null)return v;if(Array.isArray(v))return v.slice(0,5000).map(x=>cln(x,d+1));
+ if(typeof v=="object"){const o={};let n=0;for(const k of Object.keys(v)){if(!KEY.test(k)||k=="__proto__"||k=="constructor"||k=="prototype")continue;if(++n>5000)break;o[k]=cln(v[k],d+1)}return o}return null}
+// limite di richieste per chiave (ip o utente) in una finestra di tempo
+async function rl(env,k,max,win){const now=Date.now();await env.DB.prepare("CREATE TABLE IF NOT EXISTS rl(k TEXT PRIMARY KEY,n INTEGER,t INTEGER)").run();const r=await env.DB.prepare("SELECT n,t FROM rl WHERE k=?").bind(k).first();
+ if(!r||now-r.t>win){await env.DB.prepare("INSERT INTO rl(k,n,t) VALUES(?,1,?) ON CONFLICT(k) DO UPDATE SET n=1,t=excluded.t").bind(k,now).run();return true}if(r.n>=max)return false;await env.DB.prepare("UPDATE rl SET n=n+1 WHERE k=?").bind(k).run();return true}
+// registro delle azioni sensibili (chi, cosa, quando), senza dati sanitari
+async function aud(env,uid,act,tgt){try{await env.DB.prepare("CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY AUTOINCREMENT,at INTEGER,uid INTEGER,act TEXT,tgt TEXT)").run();await env.DB.prepare("INSERT INTO audit(at,uid,act,tgt) VALUES(?,?,?,?)").bind(Date.now(),uid||0,String(act).slice(0,40),String(tgt??"").slice(0,80)).run()}catch(e){}}
+// le notifiche push si inviano solo ai server ufficiali dei browser (niente indirizzi arbitrari)
+const PUSHH=/^https:\/\/([a-z0-9-]+\.)*(fcm\.googleapis\.com|android\.googleapis\.com|push\.services\.mozilla\.com|push\.apple\.com|notify\.windows\.com)\//;
+const csv=v=>{v=String(v??"");return /^[=+\-@\t\r]/.test(v)?"'"+v:v};
+
 const E=new TextEncoder(),b64=u=>btoa(String.fromCharCode(...u)),ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const eq=(a,b)=>{a=E.encode(a);b=E.encode(b);let r=a.length^b.length;for(let i=0;i<a.length;i++)r|=a[i]^(b[i]||0);return r===0};
 async function pb(pw,salt){const k=await crypto.subtle.importKey("raw",E.encode(pw),"PBKDF2",false,["deriveBits"]);return b64(new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt,iterations:100000},k,256)))}
@@ -42,9 +59,12 @@ async function cede(env,client,cl,scope,who,host){for(const c of cl){const ns=su
 export async function onRequest({request:req,env}){
  const url=new URL(req.url),p=url.pathname.replace(/^\/api\//,""),m=req.method;
  if(m!="GET"&&req.headers.get("origin")&&new URL(req.headers.get("origin")).host!==url.host)return J({e:"origin"},403);
+ if(m!="GET"&&req.headers.get("sec-fetch-site")=="cross-site")return J({e:"origin"},403);
+ if(+(req.headers.get("content-length")||0)>400000)return J({e:"big"},413);
+ const ip=req.headers.get("cf-connecting-ip")||"x";
  try{
-  const body=m=="GET"?{}:await req.json().catch(()=>({}));
-  if(p=="cron"){if(!env.CRON_KEY||req.headers.get("x-cron")!==env.CRON_KEY)return J({e:"no"},403);await tables(env);
+  let body=m=="GET"?{}:await req.json().catch(()=>({}));if(!body||typeof body!="object"||Array.isArray(body))body={};{const pw0=body.p;body=cln(body)||{};if(pw0!==undefined)body.p=typeof pw0=="string"?pw0.slice(0,200):""}
+  if(p=="cron"){if(!env.CRON_KEY||!eq(String(req.headers.get("x-cron")||""),env.CRON_KEY))return J({e:"no"},403);await tables(env);
    await env.DB.prepare("CREATE TABLE IF NOT EXISTS rem_sent(uid INTEGER NOT NULL,id TEXT NOT NULL,at INTEGER,PRIMARY KEY(uid,id))").run();
    const now=Date.now(),rows=(await env.DB.prepare("SELECT uid,data FROM state WHERE uid IN (SELECT DISTINCT uid FROM push_subs)").all()).results||[];let n=0,due=0;
    for(const r of rows){let o;try{o=JSON.parse(r.data)}catch(e){continue}
@@ -52,7 +72,7 @@ export async function onRequest({request:req,env}){
      if(x.k=="wo"&&(g.ws||(g.e&&Object.values(g.e).some(Boolean))))continue;if(x.k=="jd"&&g.jd)continue;if(x.k=="m"&&g.m&&g.m[x.s])continue;
      const ins=await env.DB.prepare("INSERT OR IGNORE INTO rem_sent(uid,id,at) VALUES(?,?,?)").bind(r.uid,String(x.id),now).run();if(!ins.meta||!ins.meta.changes)continue;
      due++;n+=await push(env,r.uid,String(x.t||"Zeno 🦉").slice(0,90),String(x.b||"").slice(0,220),String(x.p||"/").startsWith("/")?x.p:"/",env.APP_HOST||url.host)}}
-   await env.DB.prepare("DELETE FROM rem_sent WHERE at<?").bind(now-3*864e5).run();return J({ok:1,users:rows.length,due,sent:n})}
+   await env.DB.prepare("DELETE FROM rem_sent WHERE at<?").bind(now-3*864e5).run();await env.DB.prepare("DELETE FROM sessions WHERE exp<?").bind(now).run();try{await env.DB.prepare("DELETE FROM rl WHERE t<?").bind(now-864e5).run();await env.DB.prepare("DELETE FROM audit WHERE at<?").bind(now-365*864e5).run()}catch(e){}return J({ok:1,users:rows.length,due,sent:n})}
   const u=String(body.u||"").toLowerCase().trim(),pw=String(body.p||"");
   const adm=env.ADMIN_USER&&env.ADMIN_PASSWORD&&u===env.ADMIN_USER.toLowerCase();
   if(p=="login"&&m=="POST"){
@@ -65,18 +85,18 @@ export async function onRequest({request:req,env}){
    else if(row)ok=eq(await pb(pw,ub(row.salt)),row.hash);
    if(!ok){await fail();return J({e:"Credenziali errate"},401)}
    await env.DB.prepare("DELETE FROM login_fail WHERE k=?").bind("u:"+u).run();
-   return J({ok:1},200,{"set-cookie":await sess(env,row.id)});
+   await aud(env,row.id,"login",ip);return J({ok:1},200,{"set-cookie":await sess(env,row.id)});
   }
-  if(p=="invite"&&m=="GET"){await tables(env);const i=await env.DB.prepare("SELECT i.scope,i.used_by,i.data,p.name FROM invites i JOIN pros p ON p.uid=i.pro WHERE i.code=?").bind(String(url.searchParams.get("c")||"")).first();let d={};try{d=JSON.parse(i&&i.data||"{}")||{}}catch(e){}return i&&!i.used_by?J({ok:1,name:i.name,scope:i.scope,user:d.user||"",cname:(d.info&&d.info.name)||"",ready:!!d.plan,sub:d.sub?{n:d.sub.n,u:d.sub.u,start:d.sub.start,end:d.sub.end}:null}):J({e:"Invito non valido o già usato"},404)}
-  if(p=="register"&&m=="POST"){
+  if(p=="invite"&&m=="GET"){await tables(env);if(!await rl(env,"ig:"+ip,60,36e5))return J({e:"Troppe richieste"},429);const i=await env.DB.prepare("SELECT i.scope,i.used_by,i.data,p.name FROM invites i JOIN pros p ON p.uid=i.pro WHERE i.code=?").bind(String(url.searchParams.get("c")||"")).first();let d={};try{d=JSON.parse(i&&i.data||"{}")||{}}catch(e){}return i&&!i.used_by?J({ok:1,name:i.name,scope:i.scope,user:d.user||"",cname:(d.info&&d.info.name)||"",ready:!!d.plan,sub:d.sub?{n:d.sub.n,u:d.sub.u,start:d.sub.start,end:d.sub.end}:null}):J({e:"Invito non valido o già usato"},404)}
+  if(p=="register"&&m=="POST"){await tables(env);if(!await rl(env,"reg:"+ip,10,36e5))return J({e:"Troppi tentativi. Riprova più tardi."},429);
    let invOk=false;if(body.inv){await tables(env);invOk=!!await env.DB.prepare("SELECT 1 FROM invites WHERE code=? AND used_by IS NULL").bind(String(body.inv)).first()}
    if(env.REGISTRATION=="closed"&&!invOk)return J({e:"Registrazioni chiuse"},403);
    if(!/^[a-z0-9_.-]{3,32}$/.test(u)||pw.length<8)return J({e:"Utente 3-32 caratteri (a-z, 0-9, . _ -), password minimo 8"},400);
    if(adm||await env.DB.prepare("SELECT 1 FROM users WHERE username=?").bind(u).first())return J({e:"Utente non disponibile"},409);
    const id=await mk(env,u,pw,PRF({sport:!!body.sport,sp:"futsal",nt:2,team:[1,4],match:0}));
-   return J({ok:1},200,{"set-cookie":await sess(env,id)});
+   await aud(env,id,"register",ip);return J({ok:1},200,{"set-cookie":await sess(env,id)});
   }
-  if(p=="waitlist"&&m=="POST"){
+  if(p=="waitlist"&&m=="POST"){if(!await rl(env,"wl:"+ip,20,36e5))return J({e:"Troppe richieste. Riprova più tardi."},429);
    if(body.website)return J({ok:1});
    const t=(k,n)=>String(body[k]||"").trim().slice(0,n);
    const w={name:t("name",80),contact:t("contact",120),role:t("role",10),city:t("city",60),clients:t("clients",20),price:t("price",20),model:t("model",30),tools:t("tools",120),note:t("note",400),follow:t("follow",60),pain:t("pain",240),hours:t("hours",20),pilot:t("pilot",40),interview:t("interview",20),src:t("src",40)};
@@ -89,7 +109,7 @@ export async function onRequest({request:req,env}){
   const me=await who(env,req);if(!me)return J({e:"auth"},401);
   const isAdm=!!(env.ADMIN_USER&&me.username===env.ADMIN_USER.toLowerCase());
   if(p=="waitlist"&&m=="GET"){if(!isAdm)return J({e:"nf"},404);let rows=[];try{rows=(await env.DB.prepare("SELECT * FROM waitlist ORDER BY created DESC").all()).results||[]}catch(e){}
-   if(url.searchParams.get("csv")){const c=["data","nome","contatto","ruolo","citta","clienti","strumenti","come_segue","difficolta","ore_settimana","prezzo_mese","modello","pilota","intervista","provenienza","note"],q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';const lines=[c.join(";")].concat(rows.map(r=>[new Date(r.created).toISOString().slice(0,16).replace("T"," "),r.name,r.contact,r.role,r.city,r.clients,r.tools,r.follow,r.pain,r.hours,r.price,r.model,r.pilot,r.interview,r.src,r.note].map(q).join(";")));return new Response("\ufeff"+lines.join("\n"),{headers:{"content-type":"text/csv; charset=utf-8","content-disposition":"attachment; filename=lista-attesa-pro.csv","cache-control":"no-store"}})}
+   if(url.searchParams.get("csv")){const c=["data","nome","contatto","ruolo","citta","clienti","strumenti","come_segue","difficolta","ore_settimana","prezzo_mese","modello","pilota","intervista","provenienza","note"],q=v=>'"'+csv(v).replace(/"/g,'""')+'"';const lines=[c.join(";")].concat(rows.map(r=>[new Date(r.created).toISOString().slice(0,16).replace("T"," "),r.name,r.contact,r.role,r.city,r.clients,r.tools,r.follow,r.pain,r.hours,r.price,r.model,r.pilot,r.interview,r.src,r.note].map(q).join(";")));return new Response("\ufeff"+lines.join("\n"),{headers:{"content-type":"text/csv; charset=utf-8","content-disposition":"attachment; filename=lista-attesa-pro.csv","cache-control":"no-store"}})}
    return J({rows})}
   await tables(env);
   if(p=="me"){const s=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first(),pr=await proOf(env,me.id);
@@ -97,11 +117,11 @@ export async function onRequest({request:req,env}){
    return J({user:{username:me.username,admin:isAdm,pro:pr?{name:pr.name,roles:pr.roles}:null,canPro:isAdm},profile:JSON.parse(me.profile),state:s?JSON.parse(s.data):{},pros,push:!!env.VAPID_PRIVATE_KEY})}
   // ---- notifiche push
   if(p=="push/key"){if(!env.VAPID_PRIVATE_KEY)return J({e:"off"},404);const k=JSON.parse(env.VAPID_PRIVATE_KEY),u8=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0)),raw=new Uint8Array([4,...u8(k.x),...u8(k.y)]);return J({key:b64(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")})}
-  if(p=="push/sub"&&m=="POST"){const e=String(body.endpoint||""),k=body.keys||{};if(!/^https:\/\//.test(e)||!k.p256dh||!k.auth)return J({e:"bad"},400);await env.DB.prepare("INSERT INTO push_subs(endpoint,uid,p256dh,auth,created) VALUES(?,?,?,?,?) ON CONFLICT(endpoint) DO UPDATE SET uid=excluded.uid,p256dh=excluded.p256dh,auth=excluded.auth").bind(e,me.id,String(k.p256dh),String(k.auth),Date.now()).run();return J({ok:1})}
+  if(p=="push/sub"&&m=="POST"){const e=String(body.endpoint||""),k=body.keys||{};if(!PUSHH.test(e)||e.length>800||!k.p256dh||!k.auth||String(k.p256dh).length>200||String(k.auth).length>100)return J({e:"bad"},400);await env.DB.prepare("INSERT INTO push_subs(endpoint,uid,p256dh,auth,created) VALUES(?,?,?,?,?) ON CONFLICT(endpoint) DO UPDATE SET uid=excluded.uid,p256dh=excluded.p256dh,auth=excluded.auth").bind(e,me.id,String(k.p256dh),String(k.auth),Date.now()).run();return J({ok:1})}
   if(p=="push/unsub"&&m=="POST"){await env.DB.prepare("DELETE FROM push_subs WHERE endpoint=? AND uid=?").bind(String(body.endpoint||""),me.id).run();return J({ok:1})}
   if(p=="push/test"&&m=="POST"){const n=await push(env,me.id,"Zeno 🦉","Le notifiche funzionano. Ci sentiamo quando c’è qualcosa da fare.","/",url.host);return J({ok:1,n})}
   // ---- inviti: il cliente accetta
-  if(p=="invite/accept"&&m=="POST"){const i=await env.DB.prepare("SELECT * FROM invites WHERE code=?").bind(String(body.code||"")).first();if(!i||i.used_by)return J({e:"Invito non valido o già usato"},404);if(i.pro==me.id)return J({e:"Non puoi accettare un tuo invito"},400);
+  if(p=="invite/accept"&&m=="POST"){await aud(env,me.id,"invite/accept",body.code);const i=await env.DB.prepare("SELECT * FROM invites WHERE code=?").bind(String(body.code||"")).first();if(!i||i.used_by)return J({e:"Invito non valido o già usato"},404);if(i.pro==me.id)return J({e:"Non puoi accettare un tuo invito"},400);
    const cl=await clash(env,me.id,i.pro,i.scope);if(cl.length&&!body.replace)return J({e:"conflict",conflict:cl.map(c=>({name:c.name,areas:c.areas}))},409);if(cl.length)await cede(env,me.id,cl,i.scope,me.username,url.host);
    await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,?,'on',?) ON CONFLICT(pro,client) DO UPDATE SET scope=excluded.scope,status='on',pause_by=NULL").bind(i.pro,me.id,i.scope,Date.now()).run();
    await env.DB.prepare("UPDATE invites SET used_by=?,used_at=? WHERE code=?").bind(me.id,Date.now(),i.code).run();
@@ -114,13 +134,13 @@ export async function onRequest({request:req,env}){
    await push(env,i.pro,"Nuovo cliente","@"+me.username+" ha accettato il tuo invito.","/?pro=1",url.host);const pr=await proOf(env,i.pro);return J({ok:1,name:pr&&pr.name})}
   // ---- messaggi tra cliente e professionista
   if(p=="notes"&&m=="GET"){const r=(await env.DB.prepare("SELECT n.*,p.name FROM notes n JOIN pros p ON p.uid=n.pro WHERE n.client=? ORDER BY n.created DESC LIMIT 60").bind(me.id).all()).results||[];await env.DB.prepare("UPDATE notes SET seen=1 WHERE client=? AND dir='p2c'").bind(me.id).run();return J({notes:r})}
-  if(p=="note"&&m=="POST"){const pro=Number(body.pro),l=await env.DB.prepare("SELECT * FROM links WHERE pro=? AND client=? AND status='on'").bind(pro,me.id).first();if(!l)return J({e:"nf"},404);
+  if(p=="note"&&m=="POST"){if(!await rl(env,"nt:"+me.id,60,36e5))return J({e:"Hai inviato troppi messaggi: riprova tra poco"},429);const pro=Number(body.pro),l=await env.DB.prepare("SELECT * FROM links WHERE pro=? AND client=? AND status='on'").bind(pro,me.id).first();if(!l)return J({e:"nf"},404);
    const kind=["dolore","difficolta","domanda"].includes(body.kind)?body.kind:"domanda",text=String(body.text||"").trim().slice(0,500);if(!text)return J({e:"Scrivi un messaggio"},400);
    await env.DB.prepare("INSERT INTO notes(pro,client,dir,kind,text,created) VALUES(?,?,'c2p',?,?,?)").bind(pro,me.id,kind,text,Date.now()).run();
    await push(env,pro,(kind=="dolore"?"🔴 ":kind=="difficolta"?"🟠 ":"💬 ")+"@"+me.username,text.slice(0,120),"/?pro=1",url.host);return J({ok:1})}
-  if(p=="link/stop"&&m=="POST"){await env.DB.prepare("UPDATE links SET status='off',pause_by='c' WHERE pro=? AND client=?").bind(Number(body.pro),me.id).run();return J({ok:1})}
+  if(p=="link/stop"&&m=="POST"){await aud(env,me.id,"link/stop",body.pro);await env.DB.prepare("UPDATE links SET status='off',pause_by='c' WHERE pro=? AND client=?").bind(Number(body.pro),me.id).run();return J({ok:1})}
   // ---- account professionista
-  if(p=="pro/activate"&&m=="POST"){if(!(isAdm||(env.PRO_CODE&&eq(String(body.code||""),env.PRO_CODE))))return J({e:"Codice non valido"},403);
+  if(p=="pro/activate"&&m=="POST"){if(!await rl(env,"pa:"+me.id,10,36e5))return J({e:"Troppi tentativi"},429);await aud(env,me.id,"pro/activate","");if(!(isAdm||(env.PRO_CODE&&eq(String(body.code||""),env.PRO_CODE))))return J({e:"Codice non valido"},403);
    const roles=(Array.isArray(body.roles)?body.roles:[]).filter(r=>r=="pt"||r=="nu").join(",")||"pt",name=String(body.name||me.username).trim().slice(0,60)||me.username;
    await env.DB.prepare("INSERT INTO pros(uid,name,roles,created) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET name=excluded.name,roles=excluded.roles").bind(me.id,name,roles,Date.now()).run();return J({ok:1})}
   if(p=="pro"||p.startsWith("pro/")){const pr=await proOf(env,me.id);if(!pr)return J({e:"nf"},404);
@@ -132,20 +152,20 @@ export async function onRequest({request:req,env}){
     const c=code();await env.DB.prepare("INSERT INTO invites(code,pro,scope,label,created,data) VALUES(?,?,?,?,?,?)").bind(c,me.id,SC(body.scope),String(body.label||(d&&d.info.name)||"").trim().slice(0,40),Date.now(),d?JSON.stringify(d):null).run();return J({ok:1,code:c,user:d&&d.user})}
    if(p=="pro/invite/data"&&m=="POST"){const d=IDT(body.data);if(!d)return J({e:"Dati non validi"},400);const r=await env.DB.prepare("UPDATE invites SET data=?,label=COALESCE(NULLIF(?,''),label) WHERE code=? AND pro=? AND used_by IS NULL").bind(JSON.stringify(d),d.info.name,String(body.code||""),me.id).run();return r.meta&&r.meta.changes?J({ok:1}):J({e:"Invito non trovato"},404)}
    if(p=="pro/invite/del"&&m=="POST"){await env.DB.prepare("DELETE FROM invites WHERE code=? AND pro=? AND used_by IS NULL").bind(String(body.code||""),me.id).run();return J({ok:1})}
-   if(p=="pro/grant"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore"},403);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
+   if(p=="pro/grant"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore"},403);await aud(env,me.id,"pro/grant",body.u);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
     const roles=(Array.isArray(body.roles)?body.roles:[]).filter(r=>r=="pt"||r=="nu").join(",")||"pt",name=String(body.name||cu.username).trim().slice(0,60)||cu.username;
     await env.DB.prepare("INSERT INTO pros(uid,name,roles,created) VALUES(?,?,?,?) ON CONFLICT(uid) DO UPDATE SET name=excluded.name,roles=excluded.roles").bind(cu.id,name,roles,Date.now()).run();
     await push(env,cu.id,"🧑‍🏫 Pannello Pro attivo","Apri l’app: in alto trovi il Pannello Pro per seguire i tuoi clienti.","/?pro=1",url.host);return J({ok:1})}
    if(p=="pro/self"&&m=="POST"){await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,'wm','on',?) ON CONFLICT(pro,client) DO UPDATE SET status='on'").bind(me.id,me.id,Date.now()).run();return J({ok:1})}
-   if(p=="pro/add"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore può collegare utenti senza invito"},403);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
+   if(p=="pro/add"&&m=="POST"){if(!isAdm)return J({e:"Solo l’amministratore può collegare utenti senza invito"},403);await aud(env,me.id,"pro/add",body.u);const cu=await env.DB.prepare("SELECT id,username FROM users WHERE username=?").bind(String(body.u||"").toLowerCase().trim()).first();if(!cu)return J({e:"Utente non trovato"},404);
     const cl=await clash(env,cu.id,me.id,SC(body.scope));if(cl.length)return J({e:"Per "+[...new Set(cl.flatMap(c=>c.areas))].map(k=>ARN[k]).join(" e ")+" è già seguito da "+cl.map(c=>c.name).join(", ")+". Mandagli un invito: sceglierà lui."},409);
     await env.DB.prepare("INSERT INTO links(pro,client,scope,status,created) VALUES(?,?,?,'on',?) ON CONFLICT(pro,client) DO UPDATE SET scope=excluded.scope,status='on',pause_by=NULL").bind(me.id,cu.id,SC(body.scope),Date.now()).run();
     if(cu.id!=me.id)await push(env,cu.id,"🤝 "+pr.name,"Ora ti segue su Elite GK: lo trovi in Impostazioni › Il tuo team.","/",url.host);return J({ok:1})}
    const cid=Number(body.client||url.searchParams.get("c")),lk=await env.DB.prepare("SELECT * FROM links WHERE pro=? AND client=?").bind(me.id,cid).first();if(!lk)return J({e:"nf"},404);
    if(p=="pro/notes"&&m=="GET"){const r=(await env.DB.prepare("SELECT * FROM notes WHERE pro=? AND client=? ORDER BY created DESC LIMIT 60").bind(me.id,cid).all()).results||[];await env.DB.prepare("UPDATE notes SET seen=1 WHERE pro=? AND client=? AND dir='c2p'").bind(me.id,cid).run();return J({notes:r})}
-   if(p=="pro/msg"&&m=="POST"){const text=String(body.text||"").trim().slice(0,500);if(!text)return J({e:"Scrivi un messaggio"},400);await env.DB.prepare("INSERT INTO notes(pro,client,dir,kind,text,created) VALUES(?,?,'p2c','msg',?,?)").bind(me.id,cid,text,Date.now()).run();
+   if(p=="pro/msg"&&m=="POST"){if(lk.status!="on")return J({e:"Collegamento non attivo"},400);if(!await rl(env,"pm:"+me.id,200,36e5))return J({e:"Troppi messaggi: riprova tra poco"},429);const text=String(body.text||"").trim().slice(0,500);if(!text)return J({e:"Scrivi un messaggio"},400);await env.DB.prepare("INSERT INTO notes(pro,client,dir,kind,text,created) VALUES(?,?,'p2c','msg',?,?)").bind(me.id,cid,text,Date.now()).run();
     await push(env,cid,"💬 "+pr.name,text.slice(0,120),"/?msg=1",url.host);return J({ok:1})}
-   if(p=="pro/plan"&&m=="POST"){if(lk.status!="on")return J({e:"Collegamento in pausa"},400);if(expd(lk.sub))return J({e:"Abbonamento scaduto: rinnovalo per modificare il piano"},403);const np=body.plan;const raw=JSON.stringify(np||null);
+   if(p=="pro/plan"&&m=="POST"){await aud(env,me.id,"pro/plan",cid);if(lk.status!="on")return J({e:"Collegamento in pausa"},400);if(expd(lk.sub))return J({e:"Abbonamento scaduto: rinnovalo per modificare il piano"},403);const np=body.plan;const raw=JSON.stringify(np||null);
     if(!np||typeof np!="object"||typeof np.name!="string"||raw.length>150000)return J({e:"Piano non valido"},400);
     const row=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(cid).first();let o={};try{o=JSON.parse(row?row.data:"{}")}catch(e){}
     const out=mergePlan(o,np,lk.scope);
@@ -153,8 +173,8 @@ export async function onRequest({request:req,env}){
     if(!o.v){o.v=3}
     await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(cid,JSON.stringify(o),Date.now()).run();
     if(cid!=me.id)await push(env,cid,"📋 "+pr.name,"Ho aggiornato il tuo piano: aprilo per vedere le novità.","/",url.host);return J({ok:1,planRev:o.planRev})}
-   if(p=="pro/profile"&&m=="POST"){if(lk.status!="on"||lk.scope=="m")return J({e:"Non segui l’allenamento di questo cliente"},403);await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(PRF(body)),cid).run();return J({ok:1})}
-   if(p=="pro/sub"&&m=="POST"){const s=body.sub===null?null:SUB(body.sub);await env.DB.prepare("UPDATE links SET sub=?,info=COALESCE(?,info) WHERE pro=? AND client=?").bind(s?JSON.stringify(s):null,body.info?JSON.stringify(INF(body.info)):null,me.id,cid).run();
+   if(p=="pro/profile"&&m=="POST"){await aud(env,me.id,"pro/profile",cid);if(lk.status!="on"||lk.scope=="m")return J({e:"Non segui l’allenamento di questo cliente"},403);await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(PRF(body)),cid).run();return J({ok:1})}
+   if(p=="pro/sub"&&m=="POST"){await aud(env,me.id,"pro/sub",cid);const s=body.sub===null?null:SUB(body.sub);await env.DB.prepare("UPDATE links SET sub=?,info=COALESCE(?,info) WHERE pro=? AND client=?").bind(s?JSON.stringify(s):null,body.info?JSON.stringify(INF(body.info)):null,me.id,cid).run();
     if(s&&cid!=me.id&&body.notify)await push(env,cid,"✅ "+pr.name,"Percorso rinnovato"+(s.end?" fino al "+s.end.split("-").reverse().join("/"):"")+".","/",url.host);return J({ok:1})}
    if(p=="pro/link"&&m=="POST"){if(body.status=="off"){await env.DB.prepare("UPDATE links SET status='off',pause_by='p' WHERE pro=? AND client=?").bind(me.id,cid).run();return J({ok:1})}
     if(lk.pause_by=="c")return J({e:"Il cliente ha interrotto il collegamento: per riprendere mandagli un nuovo invito."},403);
@@ -166,7 +186,7 @@ export async function onRequest({request:req,env}){
    if(ex){let o={};try{o=JSON.parse(ex.data)}catch(e){}if((o.planRev||0)>(body.planRev||0)){body.plan=o.plan;body.planRev=o.planRev;body.planBy=o.planBy;body.planAt=o.planAt;if(o.planHb){body.hb=o.hb;body.planHb=o.planHb}back={plan:o.plan,planRev:o.planRev,planBy:o.planBy,planAt:o.planAt,hb:o.planHb?o.hb:null}}}
    const d=JSON.stringify(body);if(d.length>200000)return J({e:"big"},413);await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(me.id,d,Date.now()).run();return J({ok:1,...(back||{})})}
   if(p=="profile"&&m=="PUT"){const pr=PRF(body);await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(pr),me.id).run();return J({ok:1})}
-  if(p=="logout"&&m=="POST"){const c=/(?:^|; )sid=([^;]+)/.exec(req.headers.get("cookie")||"");if(c)await env.DB.prepare("DELETE FROM sessions WHERE th=?").bind(await sha(c[1])).run();return J({ok:1},200,{"set-cookie":"sid=; Path=/; Max-Age=0"})}
+  if(p=="logout"&&m=="POST"){const c=/(?:^|; )sid=([^;]+)/.exec(req.headers.get("cookie")||"");if(c)await env.DB.prepare("DELETE FROM sessions WHERE th=?").bind(await sha(c[1])).run();return J({ok:1},200,{"set-cookie":"sid=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"})}
   return J({e:"nf"},404);
  }catch(e){return J({e:"server"},500)}
 }

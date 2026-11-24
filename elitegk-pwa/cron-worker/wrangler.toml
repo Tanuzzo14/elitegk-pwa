@@ -1,0 +1,9 @@
+name = "elitegk-cron"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+[vars]
+APP_URL = "https://elitegk-pwa.pages.dev"
+
+[triggers]
+crons = ["*/5 * * * *"]

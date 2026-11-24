@@ -17,7 +17,7 @@ async function tables(env){if(ready)return;for(const q of["CREATE TABLE IF NOT E
 const SC=v=>["w","m","wm"].includes(v)?v:"wm";
 const code=()=>b64(crypto.getRandomValues(new Uint8Array(9))).replace(/[+/=]/g,"").slice(0,10);
 // dati del cliente filtrati per ambito: il professionista vede solo ciò che gli serve, mai il diario
-function forPro(data,scope){let s={};try{s=JSON.parse(data||"{}")}catch(e){}for(const d in s.log||{}){const g=s.log[d];if(!g)continue;delete g.j;if(scope=="w"){delete g.m;delete g.x}if(scope=="m"){delete g.e;delete g.ws}}if(scope=="m")s.lg={};delete s.sp;return s}
+function forPro(data,scope){let s={};try{s=JSON.parse(data||"{}")}catch(e){}for(const d in s.log||{}){const g=s.log[d];if(!g)continue;delete g.j;if(scope=="w"){delete g.m;delete g.x}if(scope=="m"){delete g.e;delete g.ws}}if(scope=="m")s.lg={};delete s.sp;delete s.rm;return s}
 async function proOf(env,uid){return await env.DB.prepare("SELECT * FROM pros WHERE uid=?").bind(uid).first()}
 async function push(env,uid,title,body,path,host){if(!env.VAPID_PRIVATE_KEY)return 0;let jwk;try{jwk=JSON.parse(env.VAPID_PRIVATE_KEY)}catch(e){return 0}
  const subs=(await env.DB.prepare("SELECT * FROM push_subs WHERE uid=?").bind(uid).all()).results||[];let n=0;
@@ -29,6 +29,15 @@ export async function onRequest({request:req,env}){
  if(m!="GET"&&req.headers.get("origin")&&new URL(req.headers.get("origin")).host!==url.host)return J({e:"origin"},403);
  try{
   const body=m=="GET"?{}:await req.json().catch(()=>({}));
+  if(p=="cron"){if(!env.CRON_KEY||req.headers.get("x-cron")!==env.CRON_KEY)return J({e:"no"},403);await tables(env);
+   await env.DB.prepare("CREATE TABLE IF NOT EXISTS rem_sent(uid INTEGER NOT NULL,id TEXT NOT NULL,at INTEGER,PRIMARY KEY(uid,id))").run();
+   const now=Date.now(),rows=(await env.DB.prepare("SELECT uid,data FROM state WHERE uid IN (SELECT DISTINCT uid FROM push_subs)").all()).results||[];let n=0,due=0;
+   for(const r of rows){let o;try{o=JSON.parse(r.data)}catch(e){continue}
+    for(const x of(Array.isArray(o.rm)?o.rm:[])){if(!x||!(x.at<=now&&x.at>now-20*60000))continue;const g=(o.log||{})[x.ds]||{};
+     if(x.k=="wo"&&(g.ws||(g.e&&Object.values(g.e).some(Boolean))))continue;if(x.k=="jd"&&g.jd)continue;if(x.k=="m"&&g.m&&g.m[x.s])continue;
+     const ins=await env.DB.prepare("INSERT OR IGNORE INTO rem_sent(uid,id,at) VALUES(?,?,?)").bind(r.uid,String(x.id),now).run();if(!ins.meta||!ins.meta.changes)continue;
+     due++;n+=await push(env,r.uid,String(x.t||"Zeno 🦉").slice(0,90),String(x.b||"").slice(0,220),String(x.p||"/").startsWith("/")?x.p:"/",env.APP_HOST||url.host)}}
+   await env.DB.prepare("DELETE FROM rem_sent WHERE at<?").bind(now-3*864e5).run();return J({ok:1,users:rows.length,due,sent:n})}
   const u=String(body.u||"").toLowerCase().trim(),pw=String(body.p||"");
   const adm=env.ADMIN_USER&&env.ADMIN_PASSWORD&&u===env.ADMIN_USER.toLowerCase();
   if(p=="login"&&m=="POST"){
@@ -102,9 +111,21 @@ export async function onRequest({request:req,env}){
    if(p=="pro/notes"&&m=="GET"){const r=(await env.DB.prepare("SELECT * FROM notes WHERE pro=? AND client=? ORDER BY created DESC LIMIT 60").bind(me.id,cid).all()).results||[];await env.DB.prepare("UPDATE notes SET seen=1 WHERE pro=? AND client=? AND dir='c2p'").bind(me.id,cid).run();return J({notes:r})}
    if(p=="pro/msg"&&m=="POST"){const text=String(body.text||"").trim().slice(0,500);if(!text)return J({e:"Scrivi un messaggio"},400);await env.DB.prepare("INSERT INTO notes(pro,client,dir,kind,text,created) VALUES(?,?,'p2c','msg',?,?)").bind(me.id,cid,text,Date.now()).run();
     await push(env,cid,"💬 "+pr.name,text.slice(0,120),"/?msg=1",url.host);return J({ok:1})}
+   if(p=="pro/plan"&&m=="POST"){if(lk.status!="on")return J({e:"Collegamento in pausa"},400);const np=body.plan;const raw=JSON.stringify(np||null);
+    if(!np||typeof np!="object"||typeof np.name!="string"||raw.length>150000)return J({e:"Piano non valido"},400);
+    const row=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(cid).first();let o={};try{o=JSON.parse(row?row.data:"{}")}catch(e){}
+    const TR=["ex","sessions","week","weeks","prog","sem","tests","gk"],DI=["meals","shop","kcal"];let out=np;
+    if(o.plan&&typeof o.plan=="object"&&lk.scope!="wm"){out={...o.plan};const keep=lk.scope=="w"?TR:DI;keep.forEach(k=>{if(k in np)out[k]=np[k]});["name","info","goals"].forEach(k=>{if(k in np)out[k]=np[k]})}
+    o.plan=out;o.planRev=(o.planRev||0)+1;o.planBy=pr.name;o.planAt=Date.now();if(Array.isArray(body.habits)){o.hb=body.habits.slice(0,20).map(h=>({id:String(h.id||"h"+Math.random().toString(36).slice(2,7)).slice(0,12),n:String(h.n||"Abitudine").slice(0,44),i:String(h.i||"✳️").slice(0,4)}));o.planHb=o.planRev}
+    if(!o.v){o.v=3}
+    await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(cid,JSON.stringify(o),Date.now()).run();
+    await push(env,cid,"📋 "+pr.name,"Ho aggiornato il tuo piano: aprilo per vedere le novità.","/",url.host);return J({ok:1,planRev:o.planRev})}
    if(p=="pro/link"&&m=="POST"){await env.DB.prepare("UPDATE links SET status=?,scope=? WHERE pro=? AND client=?").bind(body.status=="off"?"off":"on",body.scope?SC(body.scope):lk.scope,me.id,cid).run();return J({ok:1})}
    return J({e:"nf"},404)}
-  if(p=="state"&&m=="PUT"){const d=JSON.stringify(body);if(d.length>200000)return J({e:"big"},413);await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(me.id,d,Date.now()).run();return J({ok:1})}
+  if(p=="state"&&m=="PUT"){let back=null;const ex=await env.DB.prepare("SELECT data FROM state WHERE uid=?").bind(me.id).first();
+   // se il professionista ha aggiornato il piano dopo l'ultima lettura del cliente, il piano del server vince
+   if(ex){let o={};try{o=JSON.parse(ex.data)}catch(e){}if((o.planRev||0)>(body.planRev||0)){body.plan=o.plan;body.planRev=o.planRev;body.planBy=o.planBy;body.planAt=o.planAt;if(o.planHb){body.hb=o.hb;body.planHb=o.planHb}back={plan:o.plan,planRev:o.planRev,planBy:o.planBy,planAt:o.planAt,hb:o.planHb?o.hb:null}}}
+   const d=JSON.stringify(body);if(d.length>200000)return J({e:"big"},413);await env.DB.prepare("INSERT INTO state(uid,data,updated) VALUES(?,?,?) ON CONFLICT(uid) DO UPDATE SET data=excluded.data,updated=excluded.updated").bind(me.id,d,Date.now()).run();return J({ok:1,...(back||{})})}
   if(p=="profile"&&m=="PUT"){const pr={sport:!!body.sport,team:(Array.isArray(body.team)?body.team:[]).map(Number).filter(n=>n>=0&&n<7).slice(0,2),match:Number.isInteger(body.match)&&body.match>=-1&&body.match<7?body.match:-1};await env.DB.prepare("UPDATE users SET profile=? WHERE id=?").bind(JSON.stringify(pr),me.id).run();return J({ok:1})}
   if(p=="logout"&&m=="POST"){const c=/(?:^|; )sid=([^;]+)/.exec(req.headers.get("cookie")||"");if(c)await env.DB.prepare("DELETE FROM sessions WHERE th=?").bind(await sha(c[1])).run();return J({ok:1},200,{"set-cookie":"sid=; Path=/; Max-Age=0"})}
   return J({e:"nf"},404);

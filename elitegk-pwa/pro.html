@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Elite GK Pro · lista d’attesa per PT, nutrizionisti e palestre</title>
+<title>Zeno Fit Pro · lista d’attesa per PT, nutrizionisti e palestre</title><link rel="icon" href="/favicon.png" sizes="32x32"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="description" content="Tu prescrivi, l’app lo fa seguire ogni giorno. Pilota in Italia per personal trainer, nutrizionisti e palestre: entra nella lista d’attesa.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -186,6 +186,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
 .pvn{color:#93A4BE;font-size:13px;margin-top:16px;text-align:center}
 @media (max-width:820px){.pcards{grid-template-columns:1fr}.pvh{flex-direction:column;align-items:flex-start}.tl{display:none}}
 @media (prefers-reduced-motion:reduce){.pvz .hare{animation:none}.pcard{transition:none}}
+.logo i.lgm{background:none;padding:0;overflow:hidden;border-radius:10px}.lgp{color:#F59E0B;font-weight:900;margin-left:4px}
 </style>
 </head>
 <body>
@@ -193,7 +194,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
 <header class="top">
   <div class="wrap">
     <nav class="nav" aria-label="Principale">
-      <div class="logo"><i>GK</i>Elite GK Pro</div>
+      <div class="logo"><i class="lgm"><svg viewBox="0 0 512 512" width="100%" height="100%" aria-hidden="true"><defs>     <linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#13315A"/><stop offset="1" stop-color="#0B1F3A"/></linearGradient>     <linearGradient id="lgear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59E0B"/><stop offset="1" stop-color="#E8590C"/></linearGradient>   </defs>   <rect width="512" height="512" rx="116" fill="url(#lgbg)"/>   <g transform="translate(0 18)">     <g transform="rotate(-11 214 214)"><rect x="181" y="62" width="62" height="168" rx="31" fill="url(#lgear)"/><rect x="199" y="86" width="26" height="112" rx="13" fill="#FBD5B5" opacity=".55"/></g>     <g transform="rotate(9 294 214)"><rect x="263" y="76" width="62" height="154" rx="31" fill="url(#lgear)"/><rect x="281" y="100" width="26" height="98" rx="13" fill="#FBD5B5" opacity=".55"/></g>     <path d="M150 232 H356 L158 384 H362" fill="none" stroke="#FFFFFF" stroke-width="58" stroke-linecap="round" stroke-linejoin="round"/>     <path d="M388 300 h40 M374 336 h54" stroke="#F59E0B" stroke-width="16" stroke-linecap="round" opacity=".9"/>   </g> </svg></i>Zeno Fit <b class="lgp">Pro</b></div>
       <span class="tnav"><a class="tl" href="#prova">Prova la demo</a><a class="btn w go" href="#lista">Lista d’attesa</a></span>
     </nav>
     <div class="hero">
@@ -238,7 +239,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
       <p class="lead" id="dlead">Carichi la scheda che usi già, la rivedi, la invii. Poi l’app ti dice solo cosa serve a te.</p>
       <div class="demo">
         <div class="steps" id="psteps" role="tablist" aria-label="Passi lato professionista"></div>
-        <div class="win"><div class="tb"><i></i><i></i><i></i><span id="wtitle">Elite GK Pro</span></div><div id="pstage"></div></div>
+        <div class="win"><div class="tb"><i></i><i></i><i></i><span id="wtitle">Zeno Fit Pro</span></div><div id="pstage"></div></div>
       </div>
     </div>
   </section>
@@ -348,7 +349,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
             </fieldset>
             <label class="f">Cosa ti servirebbe di più? <span style="font-weight:600">(facoltativo)</span><textarea name="note" rows="2" maxlength="400"></textarea></label>
             <label class="hp">Non compilare<input name="website" tabindex="-1" autocomplete="off"></label>
-            <label class="consent"><input type="checkbox" name="consent" required>Acconsento a essere ricontattato per il pilota di Elite GK Pro. I dati servono solo a questo e puoi chiederne la cancellazione quando vuoi.</label>
+            <label class="consent"><input type="checkbox" name="consent" required>Acconsento a essere ricontattato per il pilota di Zeno Fit Pro. I dati servono solo a questo e puoi chiederne la cancellazione quando vuoi.</label>
           </div>
           <div class="msg" id="msg" role="status" aria-live="polite"></div>
           <div class="wzn"><button type="button" class="btn g" id="wzBack" hidden>Indietro</button><button type="button" class="btn p" id="wzNext">Avanti</button><button class="btn p" type="submit" id="wzSend" hidden>Invia le risposte</button></div>
@@ -358,7 +359,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
   </section>
 </main>
 <div class="stick" id="stick" hidden><span>Sei un PT o un nutrizionista?</span><a class="btn p go" href="#lista" data-skip="1">Lista d’attesa</a></div>
-<footer><div class="wrap">Elite GK Pro · Italia · <a href="/">Accedi all’app</a></div></footer>
+<footer><div class="wrap">Zeno Fit Pro · Italia · <a href="/">Accedi all’app</a></div></footer>
 
 <script>
 "use strict";
@@ -404,7 +405,7 @@ document.addEventListener("change",e=>{if(e.target.name=="role"){role=e.target.v
 function renderP(){
  const L=PS[role],x=L[ps];
  $("#psteps").innerHTML=L.map((s,i)=>`<button type="button" role="tab" aria-selected="${i==ps}" class="step ${i==ps?"on":""}" data-ps="${i}" style="--dur:${DUR}ms"><span class="n">${i+1}</span><span><b>${esc(s[0])}</b><span>${esc(s[1])}</span></span><i class="bar"></i></button>`).join("");
- $("#wtitle").textContent="Elite GK Pro · "+x[0];
+ $("#wtitle").textContent="Zeno Fit Pro · "+x[0];
  $("#pstage").innerHTML=`<div class="shotwin"><img src="${IMG(x[2])}" alt="Schermata: ${esc(x[0])}" id="pimg"></div><div class="cap2"><b>${esc(x[0])}</b> · ${esc(x[1])}<span class="zoomh">Tocca l’immagine per ingrandirla</span></div>`;
  const im=$("#pimg"),box=im.parentNode,set=()=>{const sh=Math.max(0,im.offsetHeight-box.offsetHeight);im.style.setProperty("--shift",(-sh)+"px");im.style.setProperty("--pt",Math.max(2,Math.min(5,sh/80))+"s")};
  if(REDUCED)im.style.animation="none";else if(im.complete)set();else im.onload=set;
@@ -472,7 +473,7 @@ document.addEventListener("click",e=>{const g=e.target.closest(".go");if(!g)retu
  const tgt=innerWidth<=900?$("#wl"):$("#lista");tgt.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"})});
 const SHARE_URL=location.origin+location.pathname+"?src=passaparola",SHARE_TXT="Ciao! Sto facendo una ricerca per il mio project work su un'app per personal trainer e nutrizionisti. Ti va di rispondere a 5 domande veloci? Ci vogliono 2 minuti: "+SHARE_URL;
 const COL_TXT="Ho appena risposto a una ricerca su un'app per personal trainer e nutrizionisti: fa seguire i piani ai clienti ogni giorno. Sono 2 minuti, dacci un'occhiata: "+location.origin+location.pathname+"?src=collega";
-async function share(k){const t=k=="thanks"?COL_TXT:SHARE_TXT;try{if(navigator.share){await navigator.share({title:"Elite GK Pro",text:t});return}}catch(e){return}open("https://wa.me/?text="+encodeURIComponent(t),"_blank","noopener")}
+async function share(k){const t=k=="thanks"?COL_TXT:SHARE_TXT;try{if(navigator.share){await navigator.share({title:"Zeno Fit Pro",text:t});return}}catch(e){return}open("https://wa.me/?text="+encodeURIComponent(t),"_blank","noopener")}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(b){e.preventDefault();share(b.dataset.share)}});
 document.addEventListener("click",async e=>{const b=e.target.closest("[data-copy]");if(!b)return;try{await navigator.clipboard.writeText(SHARE_URL);b.textContent="Link copiato ✓"}catch(err){prompt("Copia il link:",SHARE_URL)}});
 if("IntersectionObserver"in window){const st=$("#stick"),vis={hero:true,form:false};const upd=()=>st.hidden=vis.hero||vis.form||!$("#formBody .wz");

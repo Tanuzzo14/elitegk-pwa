@@ -1,4 +1,4 @@
-# Elite GK - PWA (Cloudflare Pages + D1)
+# Zeno Fit - PWA (Cloudflare Pages + D1)
 Struttura: index.html, sw.js, manifest.webmanifest, icon-192/512.png, schema.sql, functions/api/[[path]].js
 
 ## Deploy senza codice in locale

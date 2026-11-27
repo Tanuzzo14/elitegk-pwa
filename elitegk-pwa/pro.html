@@ -175,6 +175,17 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
  .cli .phone{order:-1}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}}
+.tnav{display:flex;align-items:center;gap:16px}.tl{color:#fff;font-weight:800;text-decoration:none;font-size:15px}.tl:hover{text-decoration:underline}
+.prova{background:linear-gradient(180deg,#0B1F3A 0%,#13315A 100%);color:#fff}.prova .k{color:#E3A008}.prova h2{color:#fff}.prova .lead{color:#C9D6EA}
+.pvh{display:flex;gap:28px;align-items:center;justify-content:space-between}.pvz{display:flex;align-items:center;gap:12px;flex:0 0 auto}.pvz span{background:#fff;color:var(--nv);font-weight:800;padding:12px 16px;border-radius:18px 18px 18px 4px;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.pvz .hare{animation:hb 2.6s ease-in-out infinite}@keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.pcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.pcard{display:flex;flex-direction:column;gap:8px;background:#fff;color:var(--tx);text-decoration:none;border-radius:22px;padding:22px;box-shadow:0 14px 40px rgba(0,0,0,.25);transition:transform .25s cubic-bezier(.3,1.4,.4,1),box-shadow .25s}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.35)}.pci{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#E8590C,#E3A008);color:#fff;box-shadow:0 8px 20px rgba(232,89,12,.35)}
+.pcard b{font-size:21px}.pcd{color:var(--mu);font-size:15px}.pcard ul{margin:4px 0 6px;padding-left:18px;color:var(--tx);font-size:14px;line-height:1.6}.pgo{margin-top:auto;color:var(--ac);font-weight:900}
+.pvn{color:#93A4BE;font-size:13px;margin-top:16px;text-align:center}
+@media (max-width:820px){.pcards{grid-template-columns:1fr}.pvh{flex-direction:column;align-items:flex-start}.tl{display:none}}
+@media (prefers-reduced-motion:reduce){.pvz .hare{animation:none}.pcard{transition:none}}
 </style>
 </head>
 <body>
@@ -183,7 +194,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
   <div class="wrap">
     <nav class="nav" aria-label="Principale">
       <div class="logo"><i>GK</i>Elite GK Pro</div>
-      <a class="btn w go" href="#lista">Lista d’attesa</a>
+      <span class="tnav"><a class="tl" href="#prova">Prova la demo</a><a class="btn w go" href="#lista">Lista d’attesa</a></span>
     </nav>
     <div class="hero">
       <div>
@@ -194,7 +205,7 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
           <p id="rl">Sono un:</p>
           <div class="chips" role="group" aria-labelledby="rl" id="roles"></div>
         </div>
-        <div class="cta"><a class="btn p go" href="#lista" data-skip="1">Entra nella lista d’attesa <span class="tm">· 2 min</span></a><a class="btn o" href="#demo">Guarda come funziona</a></div>
+        <div class="cta"><a class="btn p go" href="#lista" data-skip="1">Entra nella lista d’attesa <span class="tm">· 2 min</span></a><a class="btn o" href="#prova">Prova la demo, senza account</a></div>
         <p class="fw">Non sei un professionista? <a href="#" class="share" data-share="hero">Gira la pagina a un PT o nutrizionista che conosci →</a></p>
       </div>
       <div class="heroart" aria-hidden="true">
@@ -206,6 +217,20 @@ footer{padding:28px 0 40px;color:var(--mu);font-size:14px}
 </header>
 
 <main>
+  <section class="blk prova" id="prova" aria-labelledby="h0d">
+    <div class="wrap">
+      <div class="pvh"><div><div class="k">Demo interattiva</div>
+      <h2 id="h0d">Provala adesso, senza account</h2>
+      <p class="lead">Un pannello vero con clienti di prova: apri le schede, modifica un piano, crea un cliente dalla A alla Z, rinnova un abbonamento. Funziona da telefono e da PC. Non salviamo nulla.</p></div>
+      <div class="pvz" aria-hidden="true"><svg class="hare" width="120" height="120" viewBox="0 0 100 100" role="img" aria-label="Zeno, la lepre mascotte"><g class="zw zl"><ellipse cx="38" cy="21" rx="7.6" ry="19.5" fill="#C98B4F" transform="rotate(-14 38 40)"/><ellipse cx="38" cy="23" rx="3.8" ry="14.5" fill="#F2A7A0" transform="rotate(-14 38 40)"/><path d="M33 6.5q5-7.5 10 0q-5-2.2-10 0z" fill="#5B3A1F" transform="rotate(-14 38 40)"/></g><g class="zw zr"><ellipse cx="62" cy="21" rx="7.6" ry="19.5" fill="#C98B4F" transform="rotate(14 62 40)"/><ellipse cx="62" cy="23" rx="3.8" ry="14.5" fill="#F2A7A0" transform="rotate(14 62 40)"/><path d="M57 6.5q5-7.5 10 0q-5-2.2-10 0z" fill="#5B3A1F" transform="rotate(14 62 40)"/></g><ellipse cx="50" cy="76" rx="25" ry="20" fill="#C98B4F"/><ellipse cx="50" cy="80" rx="15" ry="14" fill="#F7EAD6"/><g class="zf"><ellipse cx="35" cy="94.5" rx="11" ry="4.6" fill="#F7EAD6"/><ellipse cx="65" cy="94.5" rx="11" ry="4.6" fill="#F7EAD6"/></g><ellipse cx="42" cy="87" rx="5" ry="6" fill="#F7EAD6" stroke="#A86E39" stroke-width="1"/><ellipse cx="58" cy="87" rx="5" ry="6" fill="#F7EAD6" stroke="#A86E39" stroke-width="1"/><circle cx="50" cy="49" r="22" fill="#C98B4F"/><path d="M30.5 36.5q19.5-9 39 0l-.6 4.6q-18.9-8-37.8 0z" fill="#E8590C"/><path d="M68.6 37l7.4-3.6-1.6 5.4 4.2 3-7.2-.8" fill="#E8590C"/><ellipse cx="50" cy="58" rx="12.5" ry="8.6" fill="#F7EAD6"/><circle cx="35.5" cy="55.5" r="3.2" fill="#F2A7A0" opacity=".75"/><circle cx="64.5" cy="55.5" r="3.2" fill="#F2A7A0" opacity=".75"/><path d="M47.2 53.6h5.6q.9 0 .4.8l-2.4 2.6q-.8.8-1.6 0l-2.4-2.6q-.5-.8.4-.8z" fill="#E07A86"/><path d="M39 58.5l-10-2M39 60.5l-10 1.2M61 58.5l10-2M61 60.5l10 1.2" stroke="#A86E39" stroke-width="1" stroke-linecap="round" opacity=".7"/><g class="ze"><path d="M37 47q4.5-5.5 9 0M54 47q4.5-5.5 9 0" stroke="#2A1A10" stroke-width="3.2" fill="none" stroke-linecap="round"/></g><path d="M44.5 58.5q5.5 7 11 0z" fill="#2A1A10"/><path d="M48 58.6h4v2.6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z" fill="#fff"/></svg><span>Ciao, sono Zeno.<br>Ti faccio fare un giro.</span></div></div>
+      <div class="pcards">
+        <a class="pcard" href="/?demo=pt"><span class="pci"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg></span><b>Personal trainer</b><span class="pcd">Sedute, esercizi, calendario sport e chi salta gli allenamenti.</span><ul><li>5 clienti con 6 settimane di dati</li><li>Editor delle sedute a tutto schermo</li><li>Segnalazioni di dolore e difficoltà</li></ul><span class="pgo">Apri la demo →</span></a>
+        <a class="pcard" href="/?demo=nu"><span class="pci"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-4 6-6.5 9.5-8"/></svg></span><b>Nutrizionista</b><span class="pcd">Pasti fissi e per giorno, lista della spesa, andamento del peso.</span><ul><li>Piani alimentari già compilati</li><li>Spesa con quantità e confezioni</li><li>Abbonamenti in scadenza da rinnovare</li></ul><span class="pgo">Apri la demo →</span></a>
+        <a class="pcard" href="/?demo=both"><span class="pci"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/></svg></span><b>Entrambi</b><span class="pcd">Segui allenamento e alimentazione, o lavori in team con un collega.</span><ul><li>Clienti condivisi con un altro professionista</li><li>Ricavi al mese dagli abbonamenti</li><li>Nuovo cliente in 6 passi con link</li></ul><span class="pgo">Apri la demo →</span></a>
+      </div>
+      <p class="pvn">Dati di prova, inventati. Quando esci dalla demo non resta nulla, né da noi né sul tuo dispositivo.</p>
+    </div>
+  </section>
   <section class="blk" id="demo" aria-labelledby="h1d">
     <div class="wrap">
       <div class="k" id="dk">Dal lato del personal trainer</div>

@@ -71,7 +71,7 @@ export async function onRequest({request:req,env}){
     for(const x of(Array.isArray(o.rm)?o.rm:[])){if(!x||!(x.at<=now&&x.at>now-20*60000))continue;const g=(o.log||{})[x.ds]||{};
      if(x.k=="wo"&&(g.ws||(g.e&&Object.values(g.e).some(Boolean))))continue;if(x.k=="jd"&&g.jd)continue;if(x.k=="m"&&g.m&&g.m[x.s])continue;
      const ins=await env.DB.prepare("INSERT OR IGNORE INTO rem_sent(uid,id,at) VALUES(?,?,?)").bind(r.uid,String(x.id),now).run();if(!ins.meta||!ins.meta.changes)continue;
-     due++;n+=await push(env,r.uid,String(x.t||"Zeno 🦉").slice(0,90),String(x.b||"").slice(0,220),String(x.p||"/").startsWith("/")?x.p:"/",env.APP_HOST||url.host)}}
+     due++;n+=await push(env,r.uid,String(x.t||"Zeno 🐇").slice(0,90),String(x.b||"").slice(0,220),String(x.p||"/").startsWith("/")?x.p:"/",env.APP_HOST||url.host)}}
    await env.DB.prepare("DELETE FROM rem_sent WHERE at<?").bind(now-3*864e5).run();await env.DB.prepare("DELETE FROM sessions WHERE exp<?").bind(now).run();try{await env.DB.prepare("DELETE FROM rl WHERE t<?").bind(now-864e5).run();await env.DB.prepare("DELETE FROM audit WHERE at<?").bind(now-365*864e5).run()}catch(e){}return J({ok:1,users:rows.length,due,sent:n})}
   const u=String(body.u||"").toLowerCase().trim(),pw=String(body.p||"");
   const adm=env.ADMIN_USER&&env.ADMIN_PASSWORD&&u===env.ADMIN_USER.toLowerCase();
@@ -119,7 +119,7 @@ export async function onRequest({request:req,env}){
   if(p=="push/key"){if(!env.VAPID_PRIVATE_KEY)return J({e:"off"},404);const k=JSON.parse(env.VAPID_PRIVATE_KEY),u8=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0)),raw=new Uint8Array([4,...u8(k.x),...u8(k.y)]);return J({key:b64(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")})}
   if(p=="push/sub"&&m=="POST"){const e=String(body.endpoint||""),k=body.keys||{};if(!PUSHH.test(e)||e.length>800||!k.p256dh||!k.auth||String(k.p256dh).length>200||String(k.auth).length>100)return J({e:"bad"},400);await env.DB.prepare("INSERT INTO push_subs(endpoint,uid,p256dh,auth,created) VALUES(?,?,?,?,?) ON CONFLICT(endpoint) DO UPDATE SET uid=excluded.uid,p256dh=excluded.p256dh,auth=excluded.auth").bind(e,me.id,String(k.p256dh),String(k.auth),Date.now()).run();return J({ok:1})}
   if(p=="push/unsub"&&m=="POST"){await env.DB.prepare("DELETE FROM push_subs WHERE endpoint=? AND uid=?").bind(String(body.endpoint||""),me.id).run();return J({ok:1})}
-  if(p=="push/test"&&m=="POST"){const n=await push(env,me.id,"Zeno 🦉","Le notifiche funzionano. Ci sentiamo quando c’è qualcosa da fare.","/",url.host);return J({ok:1,n})}
+  if(p=="push/test"&&m=="POST"){const n=await push(env,me.id,"Zeno 🐇","Le notifiche funzionano. Ci sentiamo quando c’è qualcosa da fare.","/",url.host);return J({ok:1,n})}
   // ---- inviti: il cliente accetta
   if(p=="invite/accept"&&m=="POST"){await aud(env,me.id,"invite/accept",body.code);const i=await env.DB.prepare("SELECT * FROM invites WHERE code=?").bind(String(body.code||"")).first();if(!i||i.used_by)return J({e:"Invito non valido o già usato"},404);if(i.pro==me.id)return J({e:"Non puoi accettare un tuo invito"},400);
    const cl=await clash(env,me.id,i.pro,i.scope);if(cl.length&&!body.replace)return J({e:"conflict",conflict:cl.map(c=>({name:c.name,areas:c.areas}))},409);if(cl.length)await cede(env,me.id,cl,i.scope,me.username,url.host);

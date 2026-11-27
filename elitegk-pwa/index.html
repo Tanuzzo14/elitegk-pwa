@@ -304,7 +304,8 @@ details.card>summary.pesh{list-style:none;cursor:pointer}details.card>summary.pe
 .zbub{position:absolute;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.12);animation:zpop .3s ease-out;z-index:5;max-width:220px}
 .auz{display:flex;align-items:flex-end;gap:6px;margin:4px 0 -4px;align-self:flex-start}.aubb{background:var(--card);border:1px solid var(--bd);border-radius:18px 18px 18px 4px;padding:10px 14px;font-weight:800;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);margin-bottom:60px;max-width:200px;animation:zpop .4s ease-out .3s both}
 .empty.zint{display:flex;flex-direction:column;align-items:center;gap:6px}
-.avw{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}.avw div{background:var(--c2);border-radius:10px;padding:6px 4px;text-align:center;font-size:11px;line-height:1.25}.avw b{display:block;font-size:12px}.avw span{color:var(--mu);font-weight:700}
+.avw{display:grid;grid-template-columns:1fr;gap:4px;margin-top:10px}.avw div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center;background:var(--c2);border-radius:10px;padding:8px 10px;font-size:13px}.avw b{font-size:13px}.avw span{color:var(--tx);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.avw div.ev span{color:var(--ac)}
+.sheet>div{overflow-x:hidden}
 .zco{display:flex;align-items:flex-end;gap:8px;margin:0 0 14px}.zcob{background:var(--card);border:1px solid var(--bd);border-radius:18px 18px 18px 4px;padding:12px 14px;font-weight:700;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.06);margin-bottom:26px;animation:zpop .4s ease-out}
 .dkhz{flex:0 0 auto;margin:-10px 4px -18px -8px}.dkh{align-items:center!important}
 .it .f1{font-weight:600}.it .pk{display:block;font-weight:600;font-size:13px;color:var(--mu);margin-top:2px}.it em{font-style:normal;color:var(--mu);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
@@ -551,13 +552,25 @@ function build(){const p=PL();mlNorm(p);DAY={};const pr0=pfN(prof),T=pr0.sport?p
   let c=free.filter(d=>!P.has(d));const R0=MS.map(m=>(m+1)%7).find(d=>c.includes(d)&&c.length>=3);if(R0!=null)c=c.filter(d=>d!=R0);
   const G2=spread(Math.min(2,c.length),c,[...ev],d=>preM(d)),a=G2[0]??-1,b=G2[1]??-1;let rs=R0??c.find(d=>d!=a&&d!=b);if(rs==null)rs=-1;
   for(let d=0;d<7;d++)DAY[d]=T.includes(d)?"team":MS.includes(d)?"match":d==a?"A":d==b?"B":P.has(d)?"P":d==rs?"R":"rest"}
- else{const base={};for(let d=0;d<7;d++)base[d]=(p.week&&p.week[d])||"rest";const S=p.sessions||{},isGym=id=>(S[id]&&S[id].k)=="gym";
-  const pd0=[0,1,2,3,4,5,6].filter(d=>base[d]!="rest"),fits=pd0.every(d=>!ev.has(d)&&AV.includes(d)&&!(isGym(base[d])&&preM(d)));
-  if(fits){for(let d=0;d<7;d++)DAY[d]=base[d]}
-  else{const order=[1,2,3,4,5,6,0].map(d=>base[d]).filter(x=>x!="rest"),free=[0,1,2,3,4,5,6].filter(d=>!ev.has(d)&&AV.includes(d)),n=Math.min(order.length,free.length),strict=free.filter(d=>!preM(d)).length>=n,ch=spread(n,free,[...ev],d=>strict&&preM(d)).sort((x,y)=>((x+6)%7)-((y+6)%7)),as=ch.map((d,i)=>order[i]);
-   ch.forEach((d,i)=>{if(isGym(as[i])&&preM(d)){const j=ch.findIndex((d2,j2)=>!isGym(as[j2])&&!preM(d2)===false||(!isGym(as[j2])));if(j>=0){[as[i],as[j]]=[as[j],as[i]]}}});
-   for(let d=0;d<7;d++)DAY[d]="rest";ch.forEach((d,i)=>DAY[d]=as[i]);DAY._skip=order.length-ch.length}
-  T.forEach(d=>DAY[d]="team");MS.forEach(d=>DAY[d]="match")}
+ else{const base={};for(let d=0;d<7;d++)base[d]=(p.week&&p.week[d])||"rest";const S=p.sessions||{},kd=id=>(S[id]&&S[id].k)||(VIRT[id]&&VIRT[id].k)||"",
+   isT=id=>kd(id)=="team",isM=id=>kd(id)=="match",isEv=id=>isT(id)||isM(id),isGym=id=>["gym","A","B"].includes(kd(id)),M1=[1,2,3,4,5,6,0];
+  // giorni di sport: quelli impostati dalla persona (se pratica uno sport), altrimenti quelli del piano
+  const TD=pr0.sport?T:M1.filter(d=>isT(base[d])),MD=pr0.sport?MS:M1.filter(d=>isM(base[d])),EV=new Set([...TD,...MD]),pre=d=>MD.includes((d+1)%7);
+  const firstOf=f=>M1.map(d=>base[d]).find(f),teamFor=d=>isT(base[d])?base[d]:firstOf(isT)||"team",matchFor=d=>isM(base[d])?base[d]:firstOf(isM)||"match";
+  const ind=M1.filter(d=>base[d]!="rest"&&!isEv(base[d])).map(d=>({d,id:base[d]}));
+  const fits=ind.every(x=>!EV.has(x.d)&&AV.includes(x.d)&&!(isGym(x.id)&&pre(x.d)));
+  for(let d=0;d<7;d++)DAY[d]="rest";
+  if(fits)ind.forEach(x=>DAY[x.d]=x.id);
+  else{const order=ind.map(x=>x.id),free=[0,1,2,3,4,5,6].filter(d=>!EV.has(d)&&AV.includes(d)),wk=x=>(x+6)%7;
+   // 1) palestra: mai il giorno prima della partita, distanziate tra loro e dallo sport
+   const gy=order.filter(isGym),li=order.filter(id=>!isGym(id)),okG=free.filter(d=>!pre(d));
+   const gd=spread(Math.min(gy.length,okG.length),okG,[...EV],()=>false).sort((x,y)=>wk(x)-wk(y));gd.forEach((d,i)=>DAY[d]=gy[i]);
+   let left=free.filter(d=>!gd.includes(d));const gx=gy.slice(gd.length);
+   // 2) recupero attivo il giorno dopo la partita, poi le sedute leggere
+   const ri=li.findIndex(id=>kd(id)=="reset"),rd=MD.map(m=>(m+1)%7).find(d=>left.includes(d));if(ri>=0&&rd!=null){DAY[rd]=li[ri];left=left.filter(d=>d!=rd);li.splice(ri,1)}
+   const rest=[...li,...gx],ld=spread(Math.min(rest.length,left.length),left,[...EV,...gd],()=>false).sort((x,y)=>wk(x)-wk(y));ld.forEach((d,i)=>DAY[d]=rest[i]);
+   DAY._skip=rest.length-ld.length}
+  TD.forEach(d=>DAY[d]=teamFor(d));MD.forEach(d=>DAY[d]=matchFor(d))}
  const OV=(prof&&prof.ov)||{};for(const d in OV){const v=OV[d];if(v&&(v=="rest"||(p.sessions&&p.sessions[v])))DAY[+d]=v}}
 function ses(d,ds){const p=PL(),x1=st.evx&&st.evx[ds||iso(d)],sid=x1&&((p.sessions&&p.sessions[x1])||VIRT[x1])?x1:DAY[d.getDay()],base=(p.sessions&&p.sessions[sid])||VIRT[sid]||REST,g=G(ds||iso(d));
  if(base.alts&&g.alt&&p.sessions[g.alt])return{...p.sessions[g.alt],id:g.alt,base:sid,baseS:base};
@@ -1166,7 +1179,7 @@ ${me&&me.admin?`<h4>Amministrazione</h4><a class="btn g sm" href="/api/waitlist?
  if(sec){const e=$("s-"+sec);e&&setTimeout(()=>e.scrollIntoView({block:"start"}),50)}}
 const ADM=()=>!!(me&&me.admin);
 function avBox(){const p=PL(),S=Object.values(p.sessions||{}).filter(x=>x.k&&x.k!="rest"&&x.k!="team"&&x.k!="match");if(!S.length&&!p.gk)return"";const A=avOf(),all=A.length==7,D=[1,2,3,4,5,6,0],n=p.gk?2:new Set(Object.values(p.week||{}).filter(x=>x&&x!="rest")).size||S.length;
- return `<h4 id="s-av">Quando puoi allenarti</h4><p class="sm mu" style="margin:0 0 8px">Giorni in cui puoi andare in palestra o allenarti a casa. Le sedute del piano si spostano da sole attorno allo sport e alle partite.</p><div class="chips">${D.map(d=>`<button class="chip ${A.includes(d)?"on":""}" onclick="avT(${d})">${GD[d]}</button>`).join("")}</div>${!all?`<button class="lk" style="margin-top:6px" onclick="st.set.av=[];sv();build();setS('av');draw(1)">Tutti i giorni</button>`:""}${DAY._skip>0?`<div class="sem" style="background:var(--c2);margin-top:10px"><span>⚠️</span><span>Con questi giorni restano fuori ${DAY._skip} ${DAY._skip==1?"seduta":"sedute"} della settimana. Aggiungi un giorno o avvisa chi ti segue.</span></div>`:""}<div class="avw">${[1,2,3,4,5,6,0].map(d=>{const id=DAY[d],x=(p.sessions&&p.sessions[id])||VIRT[id];return `<div><b>${GD[d]}</b><span>${id=="rest"||!x?"Riposo":esc(ses(addD(mon(today()),(d+6)%7)).n)}</span></div>`}).join("")}</div>`}
+ return `<h4 id="s-av">Quando puoi allenarti</h4><p class="sm mu" style="margin:0 0 8px">Giorni in cui puoi andare in palestra o allenarti a casa. Le sedute del piano si spostano da sole attorno allo sport e alle partite.</p><div class="chips">${D.map(d=>`<button class="chip ${A.includes(d)?"on":""}" onclick="avT(${d})">${GD[d]}</button>`).join("")}</div>${!all?`<button class="lk" style="margin-top:6px" onclick="st.set.av=[];sv();build();setS('av');draw(1)">Tutti i giorni</button>`:""}${DAY._skip>0?`<div class="sem" style="background:var(--c2);margin-top:10px"><span>⚠️</span><span>Con questi giorni restano fuori ${DAY._skip} ${DAY._skip==1?"seduta":"sedute"} della settimana. Aggiungi un giorno o avvisa chi ti segue.</span></div>`:""}<div class="avw">${[1,2,3,4,5,6,0].map(d=>{const id=DAY[d],x=(p.sessions&&p.sessions[id])||VIRT[id];return `<div class="${x&&(x.k=="team"||x.k=="match")?"ev":""}"><b>${GD[d]}</b><span>${id=="rest"||!x?"Riposo":esc(x.n)}</span></div>`}).join("")}</div>`}
 function avT(d){let a=avOf().slice();a=a.includes(d)?a.filter(x=>x!=d):[...a,d];if(!a.length){toast("Tieni almeno un giorno");return}st.set.av=a.length==7?[]:a;sv();build();setS("av");draw(1)}
 function wdT(d){const a=st.set.wd||(st.set.wd=[]),i=a.indexOf(d);if(i>=0)a.splice(i,1);else a.push(d);sv();setS();draw(1)}
 function hbAdd(){const n=$("nhn").value.trim();if(!n)return;st.hb.push({id:"h"+Date.now().toString(36),n:n.slice(0,44),i:$("nhi").value||"✳️"});sv();setS("hb");draw(1)}
